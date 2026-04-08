@@ -1,6 +1,6 @@
 package Employee;
 
-public class KitchenStaff extends User {
+public class KitchenStaff {
 
     public void viewOrderQueue() {
         

@@ -1,6 +1,6 @@
 package Employee;
 
-public class WaitStaff extends User {
+public class WaitStaff {
 
     private java.util.List<Misc.Table> assignedTables = new java.util.ArrayList<>();
     

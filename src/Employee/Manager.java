@@ -1,6 +1,6 @@
 package Employee;
 
-public class Manager extends User {
+public class Manager {
     
     public void createEmployee() {
         

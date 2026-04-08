@@ -1,6 +1,6 @@
 package Employee;
 
-public class Busboy extends User {
+public class Busboy {
 
     public void viewTableStatus() {
         
