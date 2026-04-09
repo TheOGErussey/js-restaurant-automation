@@ -10,10 +10,10 @@ public class User {
     
     private int nextID = 0;
     private int userID;
-    private String name, username, password, role;
+    private String name, username, password;
     
-    public User(String name, String username, String password, String role) {
-        this.name = name; this.username = username; this.password = password; this.role = role;
+    public User(String name, String username, String password) {
+        this.name = name; this.username = username; this.password = password;
         userID = nextID++;
         
         employees.add(this);
@@ -72,9 +72,7 @@ public class User {
     }
     
     public String getName() { return name; }
-    
-    public String getRole() { return role; }
-    
+        
     private static boolean userDoesExist(String usernameToCheck) {
         for (User user : employees) if (user.username.equals(usernameToCheck)) return true; 
         return false;

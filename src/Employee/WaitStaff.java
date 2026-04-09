@@ -1,8 +1,12 @@
 package Employee;
 
-public class WaitStaff {
+public class WaitStaff extends User {
 
     private java.util.List<Misc.Table> assignedTables = new java.util.ArrayList<>();
+    
+    public WaitStaff(String name, String username, String password) {
+        super(name, username, password);
+    }
     
     public void createOrder() {
         

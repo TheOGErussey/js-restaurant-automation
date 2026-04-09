@@ -1,6 +1,10 @@
 package Employee;
 
-public class KitchenStaff {
+public class KitchenStaff extends User {
+    
+    public KitchenStaff(String name, String username, String password) {
+        super(name, username, password);
+    }
 
     public void viewOrderQueue() {
         

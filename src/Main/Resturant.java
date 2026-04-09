@@ -13,17 +13,17 @@ public class Resturant {
     public static void main(String[] args) {
         
         /* Admin User, keep this here */
-        Employee.User admin = new Employee.User("Admin", "Admin", "123", "Admin");
+        Employee.User admin = new Employee.Manager("Admin", "Admin", "123");
         
         // Users for testing
-        Employee.User testWaitStaff = new Employee.User("Sara",         "Sara1314",     "1314",         "WaitStaff"),
-                testBusBoy          = new Employee.User("Joe Schmo",    "BusBoyJoe",    "JoePassword",  "BusBoy"),
-                testKitchenStaff    = new Employee.User("Bob",          "Chef Bob",     "password123",  "KitchenStaff");
+        Employee.User testWaitStaff = new Employee.WaitStaff("Sara",         "Sara1314",     "1314"),
+                testBusBoy          = new Employee.Busboy("Joe Schmo",    "BusBoyJoe",    "JoePassword"),
+                testKitchenStaff    = new Employee.KitchenStaff("Bob",          "Chef Bob",     "password123");
         
-        run();
+        loginScreen();
     }
     
-    private static void run() {
+    private static void loginScreen() {
         // All is a Temporary GUI 
         
         mainFrame = new JFrame("Login Screen");
@@ -37,33 +37,29 @@ public class Resturant {
         mainFrame.setVisible(true);
         
         // On press promt for user and password & attempt login
-        login.addActionListener((java.awt.event.ActionEvent e) -> { logOn(); } );
+        login.addActionListener(e -> login() );
     }
     
-    private static void logOn() {
+    private static void login() {
         Employee.User user = Employee.User.login();
-        
         if (user == null) return;
-         
         mainFrame.dispose();
-        
         System.out.println("Logged in");
-        
+        loggedOn(user);
+    }
+    
+    private static void loggedOn(Employee.User user) {
         mainFrame = new JFrame("Logged in as: " + user.getName());
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setSize(defW * 2, defH * 2);
+                
+        if (user instanceof Employee.Manager manager) addAdminOptions(manager);
+        else if (user instanceof Employee.WaitStaff waiter) addWaitStaffOptions(waiter);
+        else if (user instanceof Employee.Busboy busBoy) addBusBoyOptions(busBoy);
+        else if (user instanceof Employee.KitchenStaff kitchenStaff) addKitchenStaffOptions(kitchenStaff);
+        else System.err.println("Unrecognized role ... ");
         
-        switch (user.getRole()) {
-            case "Manager" :
-            case "Admin" : addAdminOptions(mainFrame); 
-                break;
-            case "WaitStaff" : addWaitStaffOptions(mainFrame); break;
-            case "BusBoy" : addBusBoyOptions(mainFrame); break;
-            case "KitchenStaff" : addKitchenStaffOptions(mainFrame); break;
-            default : System.err.println(user.getRole() + " does not exist!");
-        }
-        
-        // Default Options
+        // Universal Options
         JButton editAccount = new JButton("Edit Account");
         JButton logOff = new JButton("Log off");
         
@@ -77,17 +73,18 @@ public class Resturant {
    
     private static void logOff() {
         mainFrame.dispose();
-        run();
+        loginScreen();
     }
     
-    //<editor-fold defaultstate="collapsed" desc=" Add Options ">
+    //<editor-fold defaultstate="collapsed" desc=" Admin / Manager Functions ">
     
-    private static void addAdminOptions(JFrame f) {
+    private static void addAdminOptions(Employee.Manager admin) {
         int rows = 3, cols = 3;
 
         mainFrame.setLayout(new GridLayout(rows, cols));
         
         JButton createEmployee = new JButton("Create Employee");
+        createEmployee.addActionListener(e -> admin.createEmployee());
         JButton editEmployee = new JButton("Edit Employee");
         JButton deleteEmployee = new JButton("Delete Employee");
         
@@ -97,14 +94,16 @@ public class Resturant {
         JButton updateMenu = new JButton("Update Menu");
         JButton updateInventory = new JButton("Update Inventory");
         
-        f.add(createEmployee); f.add(editEmployee); f.add(deleteEmployee);
+        mainFrame.add(createEmployee); mainFrame.add(editEmployee); mainFrame.add(deleteEmployee);
         
-        f.add(approveRefund); f.add(generateReport);
+        mainFrame.add(approveRefund); mainFrame.add(generateReport);
         
-        f.add(updateMenu); f.add(updateInventory);
+        mainFrame.add(updateMenu); mainFrame.add(updateInventory);
     }
+    
+    //</editor-fold>
    
-    private static void addWaitStaffOptions(JFrame f) {
+    private static void addWaitStaffOptions(Employee.WaitStaff waiter) {
         int rows = 3, cols = 2;
 
         mainFrame.setLayout(new GridLayout(rows, cols));
@@ -118,14 +117,14 @@ public class Resturant {
         JButton viewTableStatus = new JButton("View Table Status");
         JButton updateTableStatus = new JButton("Update Table Status");
         
-        f.add(createOrder); f.add(editOrder);
+        mainFrame.add(createOrder); mainFrame.add(editOrder);
         
-        f.add(addItem); f.add(requestRefund);
+        mainFrame.add(addItem); mainFrame.add(requestRefund);
         
-        f.add(viewTableStatus); f.add(updateTableStatus);
+        mainFrame.add(viewTableStatus); mainFrame.add(updateTableStatus);
     }
     
-    private static void addBusBoyOptions(JFrame f) {
+    private static void addBusBoyOptions(Employee.Busboy busBoy) {
         int rows = 2, cols = 2;
 
         mainFrame.setLayout(new GridLayout(rows, cols));
@@ -133,10 +132,10 @@ public class Resturant {
         JButton viewTableStatus = new JButton("View Table Status");
         JButton updateTableStatus = new JButton("Update Table Status"); 
         
-        f.add(viewTableStatus); f.add(updateTableStatus);
+        mainFrame.add(viewTableStatus); mainFrame.add(updateTableStatus);
     }
     
-    private static void addKitchenStaffOptions(JFrame f) {
+    private static void addKitchenStaffOptions(Employee.KitchenStaff kitchenStaff) {
         
         int rows = 2, cols = 3;
 
@@ -146,9 +145,8 @@ public class Resturant {
         JButton updateOrderStatus = new JButton("Update Order Status"); 
         JButton viewOrderDetails = new JButton("View Order Details");
         
-        f.add(viewOrderQ); f.add(updateOrderStatus); f.add(viewOrderDetails);
+        mainFrame.add(viewOrderQ); mainFrame.add(updateOrderStatus); mainFrame.add(viewOrderDetails);
         
     }
-    
-    //</editor-fold>
+
 }
