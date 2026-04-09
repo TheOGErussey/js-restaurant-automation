@@ -24,8 +24,6 @@ public class WaitStaff {
         
     }
     
-    public void updateTableStatus() { 
-        
-    }
+    // UML has markTableClean() but updateTableStatus() can ( should ) do that.
     
 }

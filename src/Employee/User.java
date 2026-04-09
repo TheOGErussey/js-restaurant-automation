@@ -73,6 +73,8 @@ public class User {
     
     public String getName() { return name; }
     
+    public String getRole() { return role; }
+    
     private static boolean userDoesExist(String usernameToCheck) {
         for (User user : employees) if (user.username.equals(usernameToCheck)) return true; 
         return false;

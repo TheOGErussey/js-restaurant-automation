@@ -10,16 +10,12 @@ public class KitchenStaff {
         
     }
     
-    public void markOrderReady() {
-        
-    }
+    // UML has markOrderReady() but updateOrderStatus() can ( should ) do that.
     
     public void viewOrderDetails() {
         
     }
     
-    public void removeCompletedOrder() {
-        
-    }
+    // UML has removeCompletedOrder() but we can make it so it just does that itself.
         
 }
