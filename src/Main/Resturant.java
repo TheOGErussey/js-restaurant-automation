@@ -6,7 +6,7 @@ import java.awt.*;
 public class Resturant {
     
     // Default width, height
-    public static final int DEF_W = 300, DEF_H = 200;
+    public static final int DEF_W = 350, DEF_H = 300;
     
     // Colors from our canva
     public static final Color PEACH = new Color(245, 230, 211), 
@@ -28,25 +28,37 @@ public class Resturant {
     }
     
     private static void welcomeScreen(JFrame frame) {
-        
         final int X_PAD = 40, Y_PAD = 40;
         
         frame.setTitle("Welcome");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(DEF_W, DEF_H);
+        frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
         
-        JPanel optionsPanel = new JPanel();
-        optionsPanel.setLayout(new GridLayout(2, 1));
+        JPanel titlePanel = new JPanel();
+        titlePanel.setBackground(MAROON);
+        JLabel title = new JLabel("J's Corner Resturant");
+        title.setBackground(MAROON);
+        title.setForeground(PEACH);
+        title.setFont(new Font("SansSerif", Font.BOLD, 20)); // Bigger font
+        titlePanel.add(title);
+        titlePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, frame.getHeight() / 4)); // Makes the section smaller
+        
+        JPanel labelPanel = makeGridPanel(3, 1); // 3 Labels
+        labelPanel.add(makeCenteredLabel("📌 680 Arntson Dr, Marietta, GA"));
+        labelPanel.add(makeCenteredLabel("⏲ Monday - Saturday: 11AM-9:30PM"));
+        labelPanel.add(makeCenteredLabel("☎ (470) 555-1212"));
+        
+        JPanel optionsPanel = makeGridPanel(2, 1); // 2 Buttons
         optionsPanel.setBorder(BorderFactory.createEmptyBorder(Y_PAD/2, Y_PAD/2, X_PAD/2, X_PAD/2)); 
-        optionsPanel.setBackground(PEACH);
 
-        JButton login = makeButton("Login");
-        JButton exit = makeButton("Exit");
+        JButton login = makeButton("Login"), exit = makeButton("Exit");
+        optionsPanel.add(login); optionsPanel.add(exit);
         
-        optionsPanel.add(login);
-        optionsPanel.add(exit);
-        
+        frame.add(titlePanel);
+        frame.add(labelPanel);
         frame.add(optionsPanel);
+        
         frame.setVisible(true);
         
         // On press promt for user and password & attempt login
@@ -99,10 +111,8 @@ public class Resturant {
     //<editor-fold defaultstate="collapsed" desc=" Admin / Manager Functions ">
     
     private static JPanel getAdminOptions(Employee.Manager admin) {
-        int rows = 3, cols = 3;
-        
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(rows, cols));
+        final int ROWS = 3, COLS = 3;
+        JPanel buttonPanel = makeGridPanel(ROWS, COLS);
         
         JButton createEmployee = new JButton("Create Employee");
         createEmployee.addActionListener(e -> admin.createEmployee());
@@ -127,10 +137,8 @@ public class Resturant {
     //</editor-fold>
    
     private static JPanel getWaitStaffOptions(Employee.WaitStaff waiter) {
-        int rows = 3, cols = 2;
-
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(rows, cols));
+        final int ROWS = 3, COLS = 2;
+        JPanel buttonPanel = makeGridPanel(ROWS, COLS);
         
         JButton createOrder = new JButton("Create order");
         JButton editOrder = new JButton("Update Order");
@@ -151,10 +159,8 @@ public class Resturant {
     }
     
     private static JPanel getBusBoyOptions(Employee.Busboy busBoy) {
-        int rows = 2, cols = 2;
-
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(rows, cols));
+        final int ROWS = 2, COLS = 2;
+        JPanel buttonPanel = makeGridPanel(ROWS, COLS);
         
         JButton viewTableStatus = new JButton("View Table Status");
         JButton updateTableStatus = new JButton("Update Table Status"); 
@@ -165,11 +171,8 @@ public class Resturant {
     }
     
     private static JPanel getKitchenStaffOptions(Employee.KitchenStaff kitchenStaff) {
-        
-        int rows = 2, cols = 3;
-
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(rows, cols));
+        final int ROWS = 2, COLS = 3;
+        JPanel buttonPanel = makeGridPanel(ROWS, COLS);
         
         JButton viewOrderQ = new JButton("View Order Queue");
         JButton updateOrderStatus = new JButton("Update Order Status"); 
@@ -207,5 +210,19 @@ public class Resturant {
         
         return label;
     }
-
+    
+    public static JLabel makeCenteredLabel(String text) {
+        JLabel label = makeLabel(text);
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        return label;
+    }
+    
+    public static JPanel makeGridPanel(int r, int c) {
+        JPanel p = new JPanel();
+        p.setLayout(new GridLayout(r, c));
+        p.setBackground(PEACH);
+        
+        return p;
+    }
 }
