@@ -29,11 +29,12 @@ public class User {
         // passLabel, passInput
         
         JPanel panel = new JPanel(new GridLayout(2, 2, 5, 5));
+        panel.setBackground(Main.Resturant.PEACH);
 
-        JLabel userLabel = new JLabel("Username:");
+        JLabel userLabel = Main.Resturant.makeLabel("Username:");
         JTextField userField = new JTextField();
-
-        JLabel passLabel = new JLabel("Password:");
+        
+        JLabel passLabel = Main.Resturant.makeLabel("Password:");
         JPasswordField passField = new JPasswordField();
 
         panel.add(userLabel); panel.add(userField);
@@ -44,14 +45,13 @@ public class User {
         final User[] result = { null };
 
         // Add the confirmation button
-        JButton loginButton = new JButton("Login");
+        JButton loginButton = Main.Resturant.makeButton("Login");
         loginDialog.add(loginButton, BorderLayout.SOUTH);
 
         loginButton.addActionListener((java.awt.event.ActionEvent e) -> {
             String username = userField.getText();
             String password = new String(passField.getPassword());
             
-
             if (User.userDoesExist(username)) {
                 User user = User.getUser(username);
 

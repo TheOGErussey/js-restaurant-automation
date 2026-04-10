@@ -6,7 +6,11 @@ import java.awt.*;
 public class Resturant {
     
     // Default width, height
-    public static final int defW = 300, defH = 200;
+    public static final int DEF_W = 300, DEF_H = 200;
+    
+    // Colors from our canva
+    public static final Color PEACH = new Color(245, 230, 211), 
+                              MAROON   = new Color(122,  30,  30);
         
     public static void main(String[] args) {
         
@@ -16,31 +20,39 @@ public class Resturant {
         Employee.User admin = new Employee.Manager("Admin", "Admin", "123");
         
         // Users for testing
-        Employee.User testWaitStaff = new Employee.WaitStaff("Sara",      "Sara1314",     "1314"),
-                testBusBoy          = new Employee.Busboy("Joe Schmo",    "BusBoyJoe",    "JoePassword"),
-                testKitchenStaff    = new Employee.KitchenStaff("Bob",    "Chef Bob",     "password123");
+        Employee.User testWaitStaff     = new Employee.WaitStaff("Sara",      "Sara1314",     "1314"),
+                      testBusBoy        = new Employee.Busboy("Joe Schmo",    "BusBoyJoe",    "JoePassword"),
+                      testKitchenStaff  = new Employee.KitchenStaff("Bob",    "Chef Bob",     "password123");
         
-        loginScreen(mainFrame);
+        welcomeScreen(mainFrame);
     }
     
-    private static void loginScreen(JFrame frame) {
+    private static void welcomeScreen(JFrame frame) {
         
-        JPanel loginPanel = new JPanel();
-
+        final int X_PAD = 40, Y_PAD = 40;
+        
         frame.setTitle("Welcome");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(defW, defH);
-        frame.getContentPane().setBackground(new Color(245, 230, 211));
-
-        JButton login = new JButton("Login");
-                
-        loginPanel.add(login);
+        frame.setSize(DEF_W, DEF_H);
         
-        frame.add(loginPanel);
+        JPanel optionsPanel = new JPanel();
+        optionsPanel.setLayout(new GridLayout(2, 1));
+        optionsPanel.setBorder(BorderFactory.createEmptyBorder(Y_PAD/2, Y_PAD/2, X_PAD/2, X_PAD/2)); 
+        optionsPanel.setBackground(PEACH);
+
+        JButton login = makeButton("Login");
+        JButton exit = makeButton("Exit");
+        
+        optionsPanel.add(login);
+        optionsPanel.add(exit);
+        
+        frame.add(optionsPanel);
         frame.setVisible(true);
         
         // On press promt for user and password & attempt login
         login.addActionListener( e -> login(frame) );
+        // On press exit
+        exit.addActionListener( e -> frame.dispose() );
     }
     
     private static void login(JFrame frame) {
@@ -53,7 +65,7 @@ public class Resturant {
     
     private static void loggedOn(JFrame frame, Employee.User user) {
         frame.getContentPane().removeAll();
-        frame.setSize(defW*2,defH*2);
+        frame.setSize(DEF_W*2,DEF_H*2);
         frame.setTitle("Logged in as: " + user.getName());
         
         JPanel buttonPanel = new JPanel();
@@ -81,7 +93,7 @@ public class Resturant {
     private static void logOff(JFrame frame) {
         frame.getContentPane().removeAll();
         frame.dispose();
-        loginScreen(frame);
+        welcomeScreen(frame);
     }
     
     //<editor-fold defaultstate="collapsed" desc=" Admin / Manager Functions ">
@@ -167,6 +179,33 @@ public class Resturant {
         
         return buttonPanel;
         
+    }
+    
+    /**
+     * Makes a stylized JButton in line with our stylization.
+     * 
+     * @param name Text that will be on the button.
+     * @return The stylized JButton.
+     */
+    public static JButton makeButton(String name) {
+        JButton butt = new JButton(name);
+        butt.setBackground(MAROON); // Button color
+        butt.setForeground(PEACH);  // Text color
+        butt.setFocusPainted(false);
+        
+        return butt;
+    }
+    /**
+     * Makes a stylized JLabel in line with our stylization.
+     * 
+     * @param text Text that the label with display.
+     * @return The stylized JLabel;
+     */
+    public static JLabel makeLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setForeground(Main.Resturant.MAROON);
+        
+        return label;
     }
 
 }
