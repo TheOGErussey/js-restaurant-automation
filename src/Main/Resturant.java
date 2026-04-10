@@ -74,9 +74,9 @@ public class Resturant {
         JPanel buttonPanel = new JPanel();
         
              if (user instanceof Employee.Manager manager) buttonPanel = getAdminOptions(manager);
-        else if (user instanceof Employee.WaitStaff waiter) getWaitStaffOptions(waiter);
-        else if (user instanceof Employee.Busboy busBoy) getBusBoyOptions(busBoy);
-        else if (user instanceof Employee.KitchenStaff kitchenStaff) getKitchenStaffOptions(kitchenStaff);
+        else if (user instanceof Employee.WaitStaff waiter) buttonPanel = getWaitStaffOptions(waiter);
+        else if (user instanceof Employee.Busboy busBoy) buttonPanel = getBusBoyOptions(busBoy);
+        else if (user instanceof Employee.KitchenStaff kitchenStaff) buttonPanel = getKitchenStaffOptions(kitchenStaff);
         else System.err.println("Unrecognized role ... ");
         
         // Universal Options
