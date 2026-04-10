@@ -1,5 +1,7 @@
 package Employee;
 
+import static Main.Resturant.makeButton;
+import static Main.Resturant.makeGridPanel;
 import javax.swing.*;
 import java.awt.*;
 
@@ -20,16 +22,19 @@ public class User {
     }
     
     public static User login() {
-        JDialog loginDialog = new JDialog((Frame) null, "Login", true); // modal
-        loginDialog.setSize(300, 150);
+        final int X_PAD = 40, Y_PAD = 20;
+        
+        JDialog loginDialog = new JDialog((Frame) null, "Login", true); 
+        loginDialog.setSize(Main.Resturant.DEF_W, (int) (Main.Resturant.DEF_H / 1.25));
         loginDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        loginDialog.setLayout(new BoxLayout(loginDialog.getContentPane(), BoxLayout.Y_AXIS));
 
         // 2 by 2 grid
         // userLabel, userInput
         // passLabel, passInput
         
-        JPanel panel = new JPanel(new GridLayout(2, 2, 5, 5));
-        panel.setBackground(Main.Resturant.PEACH);
+        JPanel inputPanel = Main.Resturant.makeGridPanel(2, 2);
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(Y_PAD/2, Y_PAD/2, X_PAD/2, X_PAD/2)); 
 
         JLabel userLabel = Main.Resturant.makeLabel("Username:");
         JTextField userField = new JTextField();
@@ -37,18 +42,24 @@ public class User {
         JLabel passLabel = Main.Resturant.makeLabel("Password:");
         JPasswordField passField = new JPasswordField();
 
-        panel.add(userLabel); panel.add(userField);
-        panel.add(passLabel); panel.add(passField);
+        inputPanel.add(userLabel); inputPanel.add(userField);
+        inputPanel.add(passLabel); inputPanel.add(passField);
 
-        loginDialog.add(panel, BorderLayout.CENTER);
+        loginDialog.add(Main.Resturant.getHeaderPanel(15, 15));
+        loginDialog.add(inputPanel, BorderLayout.CENTER);
 
         final User[] result = { null };
 
         // Add the confirmation button
-        JButton loginButton = Main.Resturant.makeButton("Login");
-        loginDialog.add(loginButton, BorderLayout.SOUTH);
+        JPanel optionsPanel = makeGridPanel(2, 1); // 2 Buttons
+        optionsPanel.setBorder(BorderFactory.createEmptyBorder(Y_PAD/2, Y_PAD/2, X_PAD/2, X_PAD/2)); 
 
-        loginButton.addActionListener((java.awt.event.ActionEvent e) -> {
+        JButton login = makeButton("Login"), exit = makeButton("Exit");
+        optionsPanel.add(login); optionsPanel.add(exit);
+        
+        loginDialog.add(optionsPanel);
+
+        login.addActionListener((java.awt.event.ActionEvent e) -> {
             String username = userField.getText();
             String password = new String(passField.getPassword());
             

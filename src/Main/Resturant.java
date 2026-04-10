@@ -34,16 +34,7 @@ public class Resturant {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(DEF_W, DEF_H);
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
-        
-        JPanel titlePanel = new JPanel();
-        titlePanel.setBackground(MAROON);
-        JLabel title = new JLabel("J's Corner Resturant");
-        title.setBackground(MAROON);
-        title.setForeground(PEACH);
-        title.setFont(new Font("SansSerif", Font.BOLD, 20)); // Bigger font
-        titlePanel.add(title);
-        titlePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, frame.getHeight() / 4)); // Makes the section smaller
-        
+                
         JPanel labelPanel = makeGridPanel(3, 1); // 3 Labels
         labelPanel.add(makeCenteredLabel("📌 680 Arntson Dr, Marietta, GA"));
         labelPanel.add(makeCenteredLabel("⏲ Monday - Saturday: 11AM-9:30PM"));
@@ -55,7 +46,7 @@ public class Resturant {
         JButton login = makeButton("Login"), exit = makeButton("Exit");
         optionsPanel.add(login); optionsPanel.add(exit);
         
-        frame.add(titlePanel);
+        frame.add(getHeaderPanel(frame.getHeight() / 4, 20));
         frame.add(labelPanel);
         frame.add(optionsPanel);
         
@@ -184,6 +175,18 @@ public class Resturant {
         
     }
     
+    public static JPanel getHeaderPanel(int height, int fontpt) {
+        JPanel headerPanel = new JPanel();
+        headerPanel.setBackground(MAROON);
+        JLabel title = new JLabel("J's Corner Resturant");
+        title.setForeground(PEACH);
+        title.setFont(new Font("SansSerif", Font.BOLD, fontpt));
+        headerPanel.add(title);
+        headerPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, height)); // Makes the header smaller
+        
+        return headerPanel;
+    }
+    
     /**
      * Makes a stylized JButton in line with our stylization.
      * 
@@ -214,6 +217,7 @@ public class Resturant {
     public static JLabel makeCenteredLabel(String text) {
         JLabel label = makeLabel(text);
         label.setHorizontalAlignment(SwingConstants.CENTER);
+        label.setVerticalAlignment(SwingConstants.CENTER);
         
         return label;
     }
