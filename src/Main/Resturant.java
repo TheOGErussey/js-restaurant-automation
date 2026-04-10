@@ -7,81 +7,90 @@ public class Resturant {
     
     // Default width, height
     public static final int defW = 300, defH = 200;
-    
-    private static JFrame mainFrame;
-    
+        
     public static void main(String[] args) {
+        
+       JFrame mainFrame = new JFrame("Main Frame");
         
         /* Admin User, keep this here */
         Employee.User admin = new Employee.Manager("Admin", "Admin", "123");
         
         // Users for testing
-        Employee.User testWaitStaff = new Employee.WaitStaff("Sara",         "Sara1314",     "1314"),
+        Employee.User testWaitStaff = new Employee.WaitStaff("Sara",      "Sara1314",     "1314"),
                 testBusBoy          = new Employee.Busboy("Joe Schmo",    "BusBoyJoe",    "JoePassword"),
-                testKitchenStaff    = new Employee.KitchenStaff("Bob",          "Chef Bob",     "password123");
+                testKitchenStaff    = new Employee.KitchenStaff("Bob",    "Chef Bob",     "password123");
         
-        loginScreen();
+        loginScreen(mainFrame);
     }
     
-    private static void loginScreen() {
-        // All is a Temporary GUI 
+    private static void loginScreen(JFrame frame) {
         
-        mainFrame = new JFrame("Login Screen");
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setSize(defW, defH);
+        JPanel loginPanel = new JPanel();
+
+        frame.setTitle("Welcome");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(defW, defH);
+        frame.getContentPane().setBackground(new Color(245, 230, 211));
 
         JButton login = new JButton("Login");
                 
-        mainFrame.add(login);
+        loginPanel.add(login);
         
-        mainFrame.setVisible(true);
+        frame.add(loginPanel);
+        frame.setVisible(true);
         
         // On press promt for user and password & attempt login
-        login.addActionListener(e -> login() );
+        login.addActionListener( e -> login(frame) );
     }
     
-    private static void login() {
+    private static void login(JFrame frame) {
         Employee.User user = Employee.User.login();
         if (user == null) return;
-        mainFrame.dispose();
-        System.out.println("Logged in");
-        loggedOn(user);
+        frame.dispose();
+        System.out.println("Logged in"); 
+        loggedOn(frame, user);
     }
     
-    private static void loggedOn(Employee.User user) {
-        mainFrame = new JFrame("Logged in as: " + user.getName());
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setSize(defW * 2, defH * 2);
-                
-        if (user instanceof Employee.Manager manager) addAdminOptions(manager);
-        else if (user instanceof Employee.WaitStaff waiter) addWaitStaffOptions(waiter);
-        else if (user instanceof Employee.Busboy busBoy) addBusBoyOptions(busBoy);
-        else if (user instanceof Employee.KitchenStaff kitchenStaff) addKitchenStaffOptions(kitchenStaff);
+    private static void loggedOn(JFrame frame, Employee.User user) {
+        frame.getContentPane().removeAll();
+        frame.setSize(defW*2,defH*2);
+        frame.setTitle("Logged in as: " + user.getName());
+        
+        JPanel buttonPanel = new JPanel();
+        
+             if (user instanceof Employee.Manager manager) buttonPanel = getAdminOptions(manager);
+        else if (user instanceof Employee.WaitStaff waiter) getWaitStaffOptions(waiter);
+        else if (user instanceof Employee.Busboy busBoy) getBusBoyOptions(busBoy);
+        else if (user instanceof Employee.KitchenStaff kitchenStaff) getKitchenStaffOptions(kitchenStaff);
         else System.err.println("Unrecognized role ... ");
         
         // Universal Options
         JButton editAccount = new JButton("Edit Account");
         JButton logOff = new JButton("Log off");
         
-        mainFrame.add(editAccount);
-        mainFrame.add(logOff);
+        buttonPanel.add(editAccount);
+        buttonPanel.add(logOff);
+
+        logOff.addActionListener( e -> logOff(frame) );
         
-        logOff.addActionListener(e -> logOff());
+        frame.add(buttonPanel);
         
-        mainFrame.setVisible(true);
+        frame.setVisible(true);
     }
    
-    private static void logOff() {
-        mainFrame.dispose();
-        loginScreen();
+    private static void logOff(JFrame frame) {
+        frame.getContentPane().removeAll();
+        frame.dispose();
+        loginScreen(frame);
     }
     
     //<editor-fold defaultstate="collapsed" desc=" Admin / Manager Functions ">
     
-    private static void addAdminOptions(Employee.Manager admin) {
+    private static JPanel getAdminOptions(Employee.Manager admin) {
         int rows = 3, cols = 3;
-
-        mainFrame.setLayout(new GridLayout(rows, cols));
+        
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(rows, cols));
         
         JButton createEmployee = new JButton("Create Employee");
         createEmployee.addActionListener(e -> admin.createEmployee());
@@ -94,19 +103,22 @@ public class Resturant {
         JButton updateMenu = new JButton("Update Menu");
         JButton updateInventory = new JButton("Update Inventory");
         
-        mainFrame.add(createEmployee); mainFrame.add(editEmployee); mainFrame.add(deleteEmployee);
+        buttonPanel.add(createEmployee); buttonPanel.add(editEmployee); buttonPanel.add(deleteEmployee);
         
-        mainFrame.add(approveRefund); mainFrame.add(generateReport);
+        buttonPanel.add(approveRefund); buttonPanel.add(generateReport);
         
-        mainFrame.add(updateMenu); mainFrame.add(updateInventory);
+        buttonPanel.add(updateMenu); buttonPanel.add(updateInventory);
+        
+        return buttonPanel;
     }
     
     //</editor-fold>
    
-    private static void addWaitStaffOptions(Employee.WaitStaff waiter) {
+    private static JPanel getWaitStaffOptions(Employee.WaitStaff waiter) {
         int rows = 3, cols = 2;
 
-        mainFrame.setLayout(new GridLayout(rows, cols));
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(rows, cols));
         
         JButton createOrder = new JButton("Create order");
         JButton editOrder = new JButton("Update Order");
@@ -117,35 +129,43 @@ public class Resturant {
         JButton viewTableStatus = new JButton("View Table Status");
         JButton updateTableStatus = new JButton("Update Table Status");
         
-        mainFrame.add(createOrder); mainFrame.add(editOrder);
+        buttonPanel.add(createOrder); buttonPanel.add(editOrder);
         
-        mainFrame.add(addItem); mainFrame.add(requestRefund);
+        buttonPanel.add(addItem); buttonPanel.add(requestRefund);
         
-        mainFrame.add(viewTableStatus); mainFrame.add(updateTableStatus);
+        buttonPanel.add(viewTableStatus); buttonPanel.add(updateTableStatus);
+        
+        return buttonPanel;
     }
     
-    private static void addBusBoyOptions(Employee.Busboy busBoy) {
+    private static JPanel getBusBoyOptions(Employee.Busboy busBoy) {
         int rows = 2, cols = 2;
 
-        mainFrame.setLayout(new GridLayout(rows, cols));
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(rows, cols));
         
         JButton viewTableStatus = new JButton("View Table Status");
         JButton updateTableStatus = new JButton("Update Table Status"); 
         
-        mainFrame.add(viewTableStatus); mainFrame.add(updateTableStatus);
+        buttonPanel.add(viewTableStatus); buttonPanel.add(updateTableStatus);
+        
+        return buttonPanel;
     }
     
-    private static void addKitchenStaffOptions(Employee.KitchenStaff kitchenStaff) {
+    private static JPanel getKitchenStaffOptions(Employee.KitchenStaff kitchenStaff) {
         
         int rows = 2, cols = 3;
 
-        mainFrame.setLayout(new GridLayout(rows, cols));
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(rows, cols));
         
         JButton viewOrderQ = new JButton("View Order Queue");
         JButton updateOrderStatus = new JButton("Update Order Status"); 
         JButton viewOrderDetails = new JButton("View Order Details");
         
-        mainFrame.add(viewOrderQ); mainFrame.add(updateOrderStatus); mainFrame.add(viewOrderDetails);
+        buttonPanel.add(viewOrderQ); buttonPanel.add(updateOrderStatus); buttonPanel.add(viewOrderDetails);
+        
+        return buttonPanel;
         
     }
 
