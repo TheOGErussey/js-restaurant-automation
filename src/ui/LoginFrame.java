@@ -93,7 +93,7 @@ public class LoginFrame extends JFrame {
             String user = usernameField.getText();
             String pass = new String(passwordField.getPassword());
 
-            // TEMP login (we’ll connect real system next)
+            // TEMP login 
             if (user.equals("admin") && pass.equals("admin123")) {
                 JOptionPane.showMessageDialog(this, "Manager Login Success");
             } else if (user.equals("waiter") && pass.equals("123")) {
