@@ -36,10 +36,10 @@ public class User {
         JPanel inputPanel = Main.Resturant.makeGridPanel(2, 2);
         inputPanel.setBorder(BorderFactory.createEmptyBorder(Y_PAD/2, Y_PAD/2, X_PAD/2, X_PAD/2)); 
 
-        JLabel userLabel = Main.Resturant.makeLabel("Username:");
+        JLabel userLabel = Main.Resturant.makeLabel("Username:", 20);
         JTextField userField = new JTextField();
         
-        JLabel passLabel = Main.Resturant.makeLabel("Password:");
+        JLabel passLabel = Main.Resturant.makeLabel("Password:", 20);
         JPasswordField passField = new JPasswordField();
 
         inputPanel.add(userLabel); inputPanel.add(userField);

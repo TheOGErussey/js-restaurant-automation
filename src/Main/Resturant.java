@@ -6,7 +6,7 @@ import java.awt.*;
 public class Resturant {
     
     // Default width, height
-    public static final int DEF_W = 350, DEF_H = 300;
+    public static final int DEF_W = 700, DEF_H = 600;
     
     // Colors from our canva
     public static final Color PEACH = new Color(245, 230, 211), 
@@ -28,7 +28,7 @@ public class Resturant {
     }
     
     private static void welcomeScreen(JFrame frame) {
-        final int X_PAD = 40, Y_PAD = 40;
+        final int X_PAD = (int) (DEF_W * 0.20), Y_PAD = (int) (DEF_H * 0.30);
         
         frame.setTitle("Welcome");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -36,9 +36,9 @@ public class Resturant {
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
                 
         JPanel labelPanel = makeGridPanel(3, 1); // 3 Labels
-        labelPanel.add(makeCenteredLabel("📌 680 Arntson Dr, Marietta, GA"));
-        labelPanel.add(makeCenteredLabel("⏲ Monday - Saturday: 11AM-9:30PM"));
-        labelPanel.add(makeCenteredLabel("☎ (470) 555-1212"));
+        labelPanel.add(makeCenteredLabel("📌 680 Arntson Dr, Marietta, GA", 20));
+        labelPanel.add(makeCenteredLabel("⏲ Monday - Saturday: 11AM-9:30PM", 20));
+        labelPanel.add(makeCenteredLabel("☎ (470) 555-1212", 20));
         
         JPanel optionsPanel = makeGridPanel(2, 1); // 2 Buttons
         optionsPanel.setBorder(BorderFactory.createEmptyBorder(Y_PAD/2, Y_PAD/2, X_PAD/2, X_PAD/2)); 
@@ -46,7 +46,7 @@ public class Resturant {
         JButton login = makeButton("Login"), exit = makeButton("Exit");
         optionsPanel.add(login); optionsPanel.add(exit);
         
-        frame.add(getHeaderPanel(frame.getHeight() / 4, 20));
+        frame.add(getHeaderPanel(frame.getHeight() / 4, 30));
         frame.add(labelPanel);
         frame.add(optionsPanel);
         
@@ -205,17 +205,19 @@ public class Resturant {
      * Makes a stylized JLabel in line with our stylization.
      * 
      * @param text Text that the label with display.
+     * @param fontpt Size of font.
      * @return The stylized JLabel;
      */
-    public static JLabel makeLabel(String text) {
+    public static JLabel makeLabel(String text, int fontpt) {
         JLabel label = new JLabel(text);
         label.setForeground(Main.Resturant.MAROON);
+        label.setFont(new Font("SansSerif", Font.PLAIN, fontpt));
         
         return label;
     }
     
-    public static JLabel makeCenteredLabel(String text) {
-        JLabel label = makeLabel(text);
+    public static JLabel makeCenteredLabel(String text, int fontpt) {
+        JLabel label = makeLabel(text, fontpt);
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setVerticalAlignment(SwingConstants.CENTER);
         
