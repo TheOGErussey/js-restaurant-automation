@@ -13,47 +13,83 @@ public class LoginFrame extends JFrame {
 
         JPanel main = new JPanel(new BorderLayout());
 
-        // ===== HEADER =====
-        JPanel header = new JPanel(new GridBagLayout());
+        // ===== HEADER (TOP BAR WITH ICON) =====
+        JPanel header = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 25));
         header.setBackground(new Color(128, 0, 0));
         header.setPreferredSize(new Dimension(1280, 120));
 
-        JLabel title = new JLabel("Login");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 40));
+        JLabel logo = new JLabel(loadIcon("Fork.png", 60, 60));
+
+        JLabel title = new JLabel("J’s Corner Restaurant");
+        title.setFont(new Font("Serif", Font.BOLD, 40));
         title.setForeground(new Color(245, 230, 211));
 
+        header.add(logo);
         header.add(title);
 
-        // ===== CENTER =====
-        JPanel center = new JPanel();
-        center.setBackground(new Color(222, 208, 187));
-        center.setLayout(new GridBagLayout());
+        // ===== BACKGROUND =====
+        JPanel background = new JPanel(new GridBagLayout());
+        background.setBackground(new Color(222, 208, 187));
 
+        // ===== LOGIN CARD =====
+        JPanel card = new JPanel(new BorderLayout());
+        card.setPreferredSize(new Dimension(450, 420));
+        card.setBackground(new Color(245, 240, 235));
+        card.setBorder(BorderFactory.createLineBorder(new Color(60, 40, 20), 8));
+
+        // ===== CARD HEADER =====
+        JPanel cardHeader = new JPanel();
+        cardHeader.setBackground(new Color(128, 0, 0));
+        cardHeader.setPreferredSize(new Dimension(450, 70));
+
+        JLabel loginTitle = new JLabel("Login");
+        loginTitle.setFont(new Font("Serif", Font.BOLD, 26));
+        loginTitle.setForeground(new Color(245, 230, 211));
+
+        cardHeader.add(loginTitle);
+
+        // ===== FORM =====
         JPanel form = new JPanel();
-        form.setBackground(new Color(222, 208, 187));
         form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
+        form.setBackground(new Color(245, 240, 235));
 
-        // ===== USERNAME =====
-        JLabel userLabel = new JLabel("Username");
-        userLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        userLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        form.add(Box.createVerticalStrut(30));
 
-        JTextField usernameField = new JTextField();
-        usernameField.setMaximumSize(new Dimension(300, 40));
-        usernameField.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+        // USERNAME ROW
+        JPanel userRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        userRow.setOpaque(false);
 
-        // ===== PASSWORD =====
-        JLabel passLabel = new JLabel("Password");
-        passLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        passLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel userLabel = new JLabel("Employee ID:");
+        userLabel.setFont(new Font("Serif", Font.PLAIN, 18));
 
-        JPasswordField passwordField = new JPasswordField();
-        passwordField.setMaximumSize(new Dimension(300, 40));
-        passwordField.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+        JTextField usernameField = new JTextField(15);
+        usernameField.setPreferredSize(new Dimension(200, 30));
+
+        userRow.add(userLabel);
+        userRow.add(usernameField);
+
+        // PASSWORD ROW
+        JPanel passRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        passRow.setOpaque(false);
+
+        JLabel passLabel = new JLabel("Password:");
+        passLabel.setFont(new Font("Serif", Font.PLAIN, 18));
+
+        JPasswordField passwordField = new JPasswordField(15);
+        passwordField.setPreferredSize(new Dimension(200, 30));
+
+        passRow.add(passLabel);
+        passRow.add(passwordField);
+
+        form.add(userRow);
+        form.add(Box.createVerticalStrut(25));
+        form.add(passRow);
+
+        form.add(Box.createVerticalStrut(40));
 
         // ===== BUTTONS =====
-        JPanel buttonRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        buttonRow.setBackground(new Color(222, 208, 187));
+        JPanel buttonRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 0));
+        buttonRow.setOpaque(false);
 
         JButton cancelButton = createRoundedButton("Cancel");
         JButton loginButton = createRoundedButton("Login");
@@ -61,29 +97,20 @@ public class LoginFrame extends JFrame {
         buttonRow.add(cancelButton);
         buttonRow.add(loginButton);
 
-        // ===== ADD COMPONENTS =====
-        form.add(userLabel);
-        form.add(Box.createVerticalStrut(10));
-        form.add(usernameField);
-
-        form.add(Box.createVerticalStrut(25));
-
-        form.add(passLabel);
-        form.add(Box.createVerticalStrut(10));
-        form.add(passwordField);
-
-        form.add(Box.createVerticalStrut(30));
         form.add(buttonRow);
 
-        center.add(form);
+        // ===== BUILD CARD =====
+        card.add(cardHeader, BorderLayout.NORTH);
+        card.add(form, BorderLayout.CENTER);
+
+        background.add(card);
 
         main.add(header, BorderLayout.NORTH);
-        main.add(center, BorderLayout.CENTER);
+        main.add(background, BorderLayout.CENTER);
 
         add(main);
 
         // ===== BUTTON ACTIONS =====
-
         cancelButton.addActionListener(e -> {
             new HomeFrame();
             dispose();
@@ -93,7 +120,6 @@ public class LoginFrame extends JFrame {
             String user = usernameField.getText();
             String pass = new String(passwordField.getPassword());
 
-            // TEMP login (we’ll connect real system next)
             if (user.equals("admin") && pass.equals("admin123")) {
                 JOptionPane.showMessageDialog(this, "Manager Login Success");
             } else if (user.equals("waiter") && pass.equals("123")) {
@@ -106,12 +132,19 @@ public class LoginFrame extends JFrame {
         setVisible(true);
     }
 
+    // ===== ICON LOADER =====
+    private ImageIcon loadIcon(String fileName, int width, int height) {
+        ImageIcon icon = new ImageIcon("src/icons/" + fileName);
+        Image img = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        return new ImageIcon(img);
+    }
+
     // ===== ROUNDED BUTTON =====
     private JButton createRoundedButton(String text) {
         JButton button = new JButton(text);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        button.setForeground(Color.WHITE);
-        button.setBackground(new Color(160, 0, 0));
+        button.setFont(new Font("SansSerif", Font.BOLD, 20));
+        button.setForeground(new Color(245, 230, 211));
+        button.setBackground(new Color(128, 0, 0));
         button.setFocusPainted(false);
         button.setBorderPainted(false);
         button.setPreferredSize(new Dimension(180, 60));

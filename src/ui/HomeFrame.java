@@ -77,7 +77,7 @@ public class HomeFrame extends JFrame {
 
         center.add(phone);
 
-        // 🔥 move buttons DOWN slightly
+        // move buttons DOWN
         center.add(Box.createVerticalStrut(60));
 
         center.add(loginButton);
