@@ -184,7 +184,8 @@ public class LoginFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, "Manager Login Success");
             }
             else if (user.equals("waiter") && pass.equals("123")) {
-                JOptionPane.showMessageDialog(this, "Waiter Login Success");
+                new ClockInFrame(); // OPEN NEW SCREEN
+                dispose();
             }
 
             // 3. Wrong login

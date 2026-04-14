@@ -2,7 +2,6 @@ package ui;
 
 import javax.swing.*;
 import java.awt.*;
-import ui.LoginFrame;
 
 public class HomeFrame extends JFrame {
 
@@ -57,7 +56,7 @@ public class HomeFrame extends JFrame {
         // ===== PHONE =====
         JLabel phone = new JLabel("(470) 555-1212");
         phone.setFont(new Font("Serif", Font.PLAIN, 28));
-        phone.setIcon(loadIcon("/icons/Phone.png", 58, 58));
+        phone.setIcon(loadIcon("/icons/Phone.png", 49, 49));
         phone.setIconTextGap(20);
         phone.setAlignmentX(Component.CENTER_ALIGNMENT);
 
