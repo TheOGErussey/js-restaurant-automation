@@ -216,7 +216,10 @@ public class ClockInFrame extends JFrame {
         body.add(okButton);
 
         // ===== ACTION =====
-        okButton.addActionListener(e -> dialog.dispose());
+        okButton.addActionListener(e -> {
+            dialog.dispose();
+            new WaitStaffFloorFrame();
+        });
 
         // ===== BUILD =====
         main.add(header, BorderLayout.NORTH);
