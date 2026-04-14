@@ -19,10 +19,10 @@ public class HomeFrame extends JFrame {
         header.setBackground(new Color(128, 0, 0));
         header.setPreferredSize(new Dimension(1280, 120));
 
-        JLabel logo = new JLabel(loadIcon("/icons/Fork.png", 70, 70));
+        JLabel logo = new JLabel(loadIcon("/icons/Fork.png", 55, 55));
 
         JLabel title = new JLabel("J’s Corner Restaurant");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 40));
+        title.setFont(new Font("Serif", Font.BOLD, 40));
         title.setForeground(new Color(245, 230, 211));
 
         JPanel titleGroup = new JPanel();
@@ -43,21 +43,21 @@ public class HomeFrame extends JFrame {
         // ===== ADDRESS =====
         JLabel address = new JLabel("680 Arntson Dr., Marietta, GA");
         address.setFont(new Font("Segoe UI", Font.PLAIN, 38));
-        address.setIcon(loadIcon("/icons/Pin.png", 80, 80)); // 🔥 bigger
+        address.setIcon(loadIcon("/icons/Pin.png", 60, 70));
         address.setIconTextGap(20);
         address.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // ===== HOURS =====
         JLabel hours = new JLabel("Monday - Saturday: 11AM - 9:30PM");
         hours.setFont(new Font("Segoe UI", Font.PLAIN, 34));
-        hours.setIcon(loadIcon("/icons/Clock.png", 80, 80));
+        hours.setIcon(loadIcon("/icons/Clock.png", 60, 60));
         hours.setIconTextGap(20);
         hours.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // ===== PHONE =====
         JLabel phone = new JLabel("(470) 555-1212");
         phone.setFont(new Font("Segoe UI", Font.PLAIN, 34));
-        phone.setIcon(loadIcon("/icons/Phone.png", 80, 80));
+        phone.setIcon(loadIcon("/icons/Phone.png", 60, 60));
         phone.setIconTextGap(20);
         phone.setAlignmentX(Component.CENTER_ALIGNMENT);
 
