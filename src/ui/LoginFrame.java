@@ -8,6 +8,7 @@ public class LoginFrame extends JFrame {
 
     private JPasswordField passwordField;
     private boolean passwordVisible = false;
+    private JPanel errorContainer;
 
     public LoginFrame() {
         setTitle("Login - J's Corner Restaurant");
@@ -17,7 +18,7 @@ public class LoginFrame extends JFrame {
 
         JPanel main = new JPanel(new BorderLayout());
 
-        // ===== HEADER (CENTERED ICON + TITLE) =====
+        // ===== HEADER =====
         JPanel header = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 30));
         header.setBackground(new Color(128, 0, 0));
         header.setPreferredSize(new Dimension(1280, 120));
@@ -57,11 +58,12 @@ public class LoginFrame extends JFrame {
         form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
         form.setBackground(new Color(245, 240, 235));
         form.setBorder(new EmptyBorder(30, 30, 30, 30));
+        form.setAlignmentY(Component.TOP_ALIGNMENT);
 
         // ===== USER ROW =====
         JPanel userRow = new JPanel(new GridLayout(1, 2, 10, 0));
         userRow.setOpaque(false);
-        userRow.setMaximumSize(new Dimension(350, 40));
+        userRow.setMaximumSize(new Dimension(420, 50));
 
         JLabel userLabel = new JLabel("Employee ID:");
         userLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
@@ -69,6 +71,9 @@ public class LoginFrame extends JFrame {
         JTextField usernameField = new JTextField();
         usernameField.setBackground(new Color(230, 230, 230));
         usernameField.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        //usernameField.setPreferredSize(new Dimension(250, 45));
+        usernameField.setPreferredSize(new Dimension(300, 50));
+        usernameField.setFont(new Font("SansSerif", Font.PLAIN, 18)); // bigger text
 
         userRow.add(userLabel);
         userRow.add(usernameField);
@@ -76,18 +81,21 @@ public class LoginFrame extends JFrame {
         // ===== PASSWORD ROW =====
         JPanel passRow = new JPanel(new GridLayout(1, 2, 10, 0));
         passRow.setOpaque(false);
-        passRow.setMaximumSize(new Dimension(350, 40));
+        passRow.setMaximumSize(new Dimension(420, 50));
 
         JLabel passLabel = new JLabel("Password:");
         passLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
 
         JPanel passwordPanel = new JPanel(new BorderLayout());
         passwordPanel.setBackground(new Color(230, 230, 230));
+        //passwordPanel.setPreferredSize(new Dimension(250, 45));
+        passwordPanel.setPreferredSize(new Dimension(300, 50));
 
         passwordField = new JPasswordField();
         passwordField.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 5));
         passwordField.setBackground(new Color(230, 230, 230));
         passwordField.setEchoChar('*');
+        passwordField.setFont(new Font("SansSerif", Font.PLAIN, 18)); // bigger text
 
         JButton eyeButton = new JButton(loadIcon("Eye.png", 18, 18));
         eyeButton.setPreferredSize(new Dimension(30, 30));
@@ -129,6 +137,12 @@ public class LoginFrame extends JFrame {
         buttonRow.add(Box.createHorizontalGlue());
 
         // ===== ADD FORM =====
+        errorContainer = new JPanel();
+        errorContainer.setLayout(new BoxLayout(errorContainer, BoxLayout.Y_AXIS));
+        errorContainer.setOpaque(false);
+
+        form.add(errorContainer);
+        form.add(Box.createVerticalStrut(10));
         form.add(userRow);
         form.add(Box.createVerticalStrut(25));
         form.add(passRow);
@@ -153,10 +167,33 @@ public class LoginFrame extends JFrame {
         });
 
         loginButton.addActionListener(e -> {
-            String user = usernameField.getText();
-            String pass = new String(passwordField.getPassword());
 
-            JOptionPane.showMessageDialog(this, "Login clicked");
+            String user = usernameField.getText().trim();
+            String pass = new String(passwordField.getPassword()).trim();
+
+            // Clear old message
+            errorContainer.removeAll();
+
+            // Check if empty
+            if (user.isEmpty() || pass.isEmpty()) {
+                errorContainer.add(createErrorBanner("Please fill in all required fields"));
+            }
+
+            // Check credentials
+            else if (user.equals("admin") && pass.equals("admin123")) {
+                JOptionPane.showMessageDialog(this, "Manager Login Success");
+            }
+            else if (user.equals("waiter") && pass.equals("123")) {
+                JOptionPane.showMessageDialog(this, "Waiter Login Success");
+            }
+
+            // 3. Wrong login
+            else {
+                errorContainer.add(createErrorBanner("Invalid Login Credentials"));
+            }
+
+            errorContainer.revalidate();
+            errorContainer.repaint();
         });
 
         setVisible(true);
@@ -204,5 +241,22 @@ public class LoginFrame extends JFrame {
         });
 
         return button;
+    }
+
+    private JPanel createErrorBanner(String message) {
+
+        JPanel banner = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
+        banner.setBackground(new Color(245, 245, 245));
+        banner.setBorder(BorderFactory.createLineBorder(new Color(220, 50, 50), 4));
+
+        JLabel icon = new JLabel(loadIcon("Warning.png", 35, 35));
+
+        JLabel text = new JLabel(message);
+        text.setFont(new Font("SansSerif", Font.BOLD, 16));
+
+        banner.add(icon);
+        banner.add(text);
+
+        return banner;
     }
 }

@@ -14,7 +14,7 @@ public class HomeFrame extends JFrame {
 
         JPanel main = new JPanel(new BorderLayout());
 
-        // ===== HEADER (PERFECTLY CENTERED) =====
+        // ===== HEADER =====
         JPanel header = new JPanel(new GridBagLayout());
         header.setBackground(new Color(128, 0, 0));
         header.setPreferredSize(new Dimension(1280, 120));
@@ -31,7 +31,7 @@ public class HomeFrame extends JFrame {
         titleGroup.add(Box.createHorizontalStrut(15));
         titleGroup.add(title);
 
-        header.add(titleGroup); // centered automatically
+        header.add(titleGroup);
 
         // ===== CENTER =====
         JPanel center = new JPanel();
@@ -42,28 +42,30 @@ public class HomeFrame extends JFrame {
 
         // ===== ADDRESS =====
         JLabel address = new JLabel("680 Arntson Dr., Marietta, GA");
-        address.setFont(new Font("Segoe UI", Font.PLAIN, 38));
+        address.setFont(new Font("Serif", Font.PLAIN, 28));
         address.setIcon(loadIcon("/icons/Pin.png", 60, 70));
         address.setIconTextGap(20);
         address.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // ===== HOURS =====
         JLabel hours = new JLabel("Monday - Saturday: 11AM - 9:30PM");
-        hours.setFont(new Font("Segoe UI", Font.PLAIN, 34));
+        hours.setFont(new Font("Serif", Font.PLAIN, 28));
         hours.setIcon(loadIcon("/icons/Clock.png", 60, 60));
         hours.setIconTextGap(20);
         hours.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // ===== PHONE =====
         JLabel phone = new JLabel("(470) 555-1212");
-        phone.setFont(new Font("Segoe UI", Font.PLAIN, 34));
-        phone.setIcon(loadIcon("/icons/Phone.png", 60, 60));
+        phone.setFont(new Font("Serif", Font.PLAIN, 28));
+        phone.setIcon(loadIcon("/icons/Phone.png", 58, 58));
         phone.setIconTextGap(20);
         phone.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // ===== BUTTONS =====
         JButton loginButton = createRoundedButton("Login");
         JButton exitButton = createRoundedButton("Exit");
+        loginButton.setPreferredSize(new Dimension(200, 70));
+        exitButton.setPreferredSize(new Dimension(200, 70));
 
         loginButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -78,10 +80,10 @@ public class HomeFrame extends JFrame {
         center.add(phone);
 
         // move buttons DOWN
-        center.add(Box.createVerticalStrut(60));
+        center.add(Box.createVerticalStrut(70));
 
         center.add(loginButton);
-        center.add(Box.createVerticalStrut(15));
+        center.add(Box.createVerticalStrut(25));
         center.add(exitButton);
 
         main.add(header, BorderLayout.NORTH);
@@ -110,16 +112,20 @@ public class HomeFrame extends JFrame {
     // ===== ROUNDED BUTTON =====
     private JButton createRoundedButton(String text) {
         JButton button = new JButton(text);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 22));
+
+        button.setFont(new Font("SansSerif", Font.BOLD, 18));
         button.setForeground(Color.WHITE);
-        button.setBackground(new Color(160, 0, 0));
+        button.setBackground(new Color(145, 26, 26));
+
         button.setFocusPainted(false);
         button.setBorderPainted(false);
-        button.setPreferredSize(new Dimension(260, 70));
-        button.setMaximumSize(new Dimension(260, 70));
-
         button.setContentAreaFilled(false);
         button.setOpaque(false);
+
+        // FORCE SIZE HERE
+        button.setPreferredSize(new Dimension(200, 65));
+        button.setMinimumSize(new Dimension(200, 65));
+        button.setMaximumSize(new Dimension(200, 65));
 
         button.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
             @Override
@@ -129,7 +135,7 @@ public class HomeFrame extends JFrame {
                         RenderingHints.VALUE_ANTIALIAS_ON);
 
                 g2.setColor(button.getBackground());
-                g2.fillRoundRect(0, 0, c.getWidth(), c.getHeight(), 50, 50);
+                g2.fillRoundRect(0, 0, c.getWidth(), c.getHeight(), 40, 40);
 
                 super.paint(g, c);
             }
