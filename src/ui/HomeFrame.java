@@ -14,7 +14,7 @@ public class HomeFrame extends JFrame {
 
         JPanel main = new JPanel(new BorderLayout());
 
-        // ===== HEADER (PERFECTLY CENTERED) =====
+        // ===== HEADER =====
         JPanel header = new JPanel(new GridBagLayout());
         header.setBackground(new Color(128, 0, 0));
         header.setPreferredSize(new Dimension(1280, 120));
@@ -31,7 +31,7 @@ public class HomeFrame extends JFrame {
         titleGroup.add(Box.createHorizontalStrut(15));
         titleGroup.add(title);
 
-        header.add(titleGroup); // centered automatically
+        header.add(titleGroup); 
 
         // ===== CENTER =====
         JPanel center = new JPanel();
@@ -43,7 +43,7 @@ public class HomeFrame extends JFrame {
         // ===== ADDRESS =====
         JLabel address = new JLabel("680 Arntson Dr., Marietta, GA");
         address.setFont(new Font("Segoe UI", Font.PLAIN, 38));
-        address.setIcon(loadIcon("/icons/Pin.png", 80, 80)); // 🔥 bigger
+        address.setIcon(loadIcon("/icons/Pin.png", 80, 80)); 
         address.setIconTextGap(20);
         address.setAlignmentX(Component.CENTER_ALIGNMENT);
 
