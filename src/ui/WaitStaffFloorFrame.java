@@ -3,15 +3,23 @@ package ui;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class WaitStaffFloorFrame extends JFrame {
 
     private JLabel selectedTableLabel;
     private JLabel statusLabel;
 
+    private JButton selectedTableButton = null;
+    private String selectedTableName = null;
+
     private final Color OPEN = new Color(110, 200, 80);
     private final Color OCCUPIED = new Color(240, 200, 80);
     private final Color DIRTY = new Color(230, 50, 50);
+
+    private final Map<JButton, String> tableStatuses = new HashMap<>();
+    private final Map<JButton, String> tableNames = new HashMap<>();
 
     public WaitStaffFloorFrame() {
 
@@ -46,6 +54,13 @@ public class WaitStaffFloorFrame extends JFrame {
 
         JLabel logout = new JLabel("Logout");
         logout.setForeground(Color.WHITE);
+        logout.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        logout.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                showLogoutPopup();
+            }
+        });
 
         rightHeader.add(welcome);
         rightHeader.add(logout);
@@ -64,23 +79,23 @@ public class WaitStaffFloorFrame extends JFrame {
         gbc.fill = GridBagConstraints.NONE;
 
         // LEFT SIDE (A + B)
-        addTable(tablePanel, "A1", OPEN, 0, 0, gbc);
-        addTable(tablePanel, "B1", OPEN, 1, 0, gbc);
+        addTable(tablePanel, "A1", "Open", 0, 0, gbc);
+        addTable(tablePanel, "B1", "Open", 1, 0, gbc);
 
-        addTable(tablePanel, "A2", OPEN, 0, 1, gbc);
-        addTable(tablePanel, "B2", OCCUPIED, 1, 1, gbc);
+        addTable(tablePanel, "A2", "Open", 0, 1, gbc);
+        addTable(tablePanel, "B2", "Occupied", 1, 1, gbc);
 
-        addTable(tablePanel, "A3", DIRTY, 0, 2, gbc);
-        addTable(tablePanel, "B3", OPEN, 1, 2, gbc);
+        addTable(tablePanel, "A3", "Dirty", 0, 2, gbc);
+        addTable(tablePanel, "B3", "Open", 1, 2, gbc);
 
-        addTable(tablePanel, "A4", OCCUPIED, 0, 3, gbc);
-        addTable(tablePanel, "B4", OCCUPIED, 1, 3, gbc);
+        addTable(tablePanel, "A4", "Occupied", 0, 3, gbc);
+        addTable(tablePanel, "B4", "Occupied", 1, 3, gbc);
 
-        addTable(tablePanel, "A5", DIRTY, 0, 4, gbc);
-        addTable(tablePanel, "B5", OPEN, 1, 4, gbc);
+        addTable(tablePanel, "A5", "Dirty", 0, 4, gbc);
+        addTable(tablePanel, "B5", "Open", 1, 4, gbc);
 
-        addTable(tablePanel, "A6", OPEN, 0, 5, gbc);
-        addTable(tablePanel, "B6", OPEN, 1, 5, gbc);
+        addTable(tablePanel, "A6", "Open", 0, 5, gbc);
+        addTable(tablePanel, "B6", "Open", 1, 5, gbc);
 
         // ===== CENTER GREY BLOCK =====
         JPanel centerBlock = new JPanel();
@@ -105,30 +120,30 @@ public class WaitStaffFloorFrame extends JFrame {
         gbc.fill = GridBagConstraints.NONE;
 
         // MIDDLE BOTTOM (C + D)
-        addTable(tablePanel, "C5", DIRTY, 2, 4, gbc);
-        addTable(tablePanel, "D5", OCCUPIED, 3, 4, gbc);
+        addTable(tablePanel, "C5", "Dirty", 2, 4, gbc);
+        addTable(tablePanel, "D5", "Occupied", 3, 4, gbc);
 
-        addTable(tablePanel, "C6", OPEN, 2, 5, gbc);
-        addTable(tablePanel, "D6", OCCUPIED, 3, 5, gbc);
+        addTable(tablePanel, "C6", "Open", 2, 5, gbc);
+        addTable(tablePanel, "D6", "Occupied", 3, 5, gbc);
 
         // RIGHT SIDE (E + F)
-        addTable(tablePanel, "E1", OPEN, 4, 0, gbc);
-        addTable(tablePanel, "F1", OPEN, 5, 0, gbc);
+        addTable(tablePanel, "E1", "Open", 4, 0, gbc);
+        addTable(tablePanel, "F1", "Open", 5, 0, gbc);
 
-        addTable(tablePanel, "E2", OPEN, 4, 1, gbc);
-        addTable(tablePanel, "F2", OPEN, 5, 1, gbc);
+        addTable(tablePanel, "E2", "Open", 4, 1, gbc);
+        addTable(tablePanel, "F2", "Open", 5, 1, gbc);
 
-        addTable(tablePanel, "E3", DIRTY, 4, 2, gbc);
-        addTable(tablePanel, "F3", OPEN, 5, 2, gbc);
+        addTable(tablePanel, "E3", "Dirty", 4, 2, gbc);
+        addTable(tablePanel, "F3", "Open", 5, 2, gbc);
 
-        addTable(tablePanel, "E4", OCCUPIED, 4, 3, gbc);
-        addTable(tablePanel, "F4", OPEN, 5, 3, gbc);
+        addTable(tablePanel, "E4", "Occupied", 4, 3, gbc);
+        addTable(tablePanel, "F4", "Open", 5, 3, gbc);
 
-        addTable(tablePanel, "E5", DIRTY, 4, 4, gbc);
-        addTable(tablePanel, "F5", OPEN, 5, 4, gbc);
+        addTable(tablePanel, "E5", "Dirty", 4, 4, gbc);
+        addTable(tablePanel, "F5", "Open", 5, 4, gbc);
 
-        addTable(tablePanel, "E6", OPEN, 4, 5, gbc);
-        addTable(tablePanel, "F6", OPEN, 5, 5, gbc);
+        addTable(tablePanel, "E6", "Open", 4, 5, gbc);
+        addTable(tablePanel, "F6", "Open", 5, 5, gbc);
 
         // ===== SIDE PANEL =====
         JPanel sideWrapper = new JPanel(new GridBagLayout());
@@ -183,6 +198,36 @@ public class WaitStaffFloorFrame extends JFrame {
 
         sideWrapper.add(sidePanel);
 
+        // ===== ACTIONS =====
+        orderBtn.addActionListener(e -> {
+            new ManageOrderFrame();
+            dispose();
+        });
+
+        cancelBtn.addActionListener(e -> {
+            selectedTableButton = null;
+            selectedTableName = null;
+            selectedTableLabel.setText("Table Selected: None");
+            statusLabel.setText("Status: ");
+        });
+
+        updateBtn.addActionListener(e -> {
+            if (selectedTableButton == null) {
+                showErrorPopup("Please select a table first.");
+                return;
+            }
+
+            String currentStatus = tableStatuses.get(selectedTableButton);
+
+            if ("Occupied".equals(currentStatus)) {
+                tableStatuses.put(selectedTableButton, "Dirty");
+                selectedTableButton.setBackground(DIRTY);
+                statusLabel.setText("Status: Dirty");
+            } else {
+                showErrorPopup("Only occupied tables can be marked dirty.");
+            }
+        });
+
         // ===== BUILD =====
         main.add(header, BorderLayout.NORTH);
         main.add(tablePanel, BorderLayout.CENTER);
@@ -193,28 +238,98 @@ public class WaitStaffFloorFrame extends JFrame {
     }
 
     // ===== TABLE METHOD =====
-    private void addTable(JPanel panel, String name, Color color, int x, int y, GridBagConstraints gbc) {
+    private void addTable(JPanel panel, String name, String status, int x, int y, GridBagConstraints gbc) {
         JButton btn = new JButton(name);
         Dimension size = new Dimension(85, 75);
 
         btn.setPreferredSize(size);
         btn.setMinimumSize(size);
         btn.setMaximumSize(size);
-        btn.setBackground(color);
+        btn.setBackground(getColorForStatus(status));
         btn.setFocusPainted(false);
         btn.setBorderPainted(false);
 
-        btn.addActionListener(e -> {
-            selectedTableLabel.setText("Table Selected: " + name);
+        tableStatuses.put(btn, status);
+        tableNames.put(btn, name);
 
-            if (color.equals(OPEN)) statusLabel.setText("Status: Open");
-            else if (color.equals(OCCUPIED)) statusLabel.setText("Status: Occupied");
-            else statusLabel.setText("Status: Dirty");
+        btn.addActionListener(e -> {
+            selectedTableButton = btn;
+            selectedTableName = name;
+
+            selectedTableLabel.setText("Table Selected: " + name);
+            statusLabel.setText("Status: " + tableStatuses.get(btn));
         });
 
         gbc.gridx = x;
         gbc.gridy = y;
         panel.add(btn, gbc);
+    }
+
+    private Color getColorForStatus(String status) {
+        switch (status) {
+            case "Open":
+                return OPEN;
+            case "Occupied":
+                return OCCUPIED;
+            case "Dirty":
+                return DIRTY;
+            default:
+                return OPEN;
+        }
+    }
+
+    private void showErrorPopup(String message) {
+        JDialog dialog = new JDialog(this, true);
+        dialog.setSize(420, 220);
+        dialog.setLocationRelativeTo(this);
+        dialog.setUndecorated(true);
+
+        JPanel main = new JPanel(new BorderLayout());
+        main.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(new Color(145, 26, 26));
+        header.setPreferredSize(new Dimension(420, 55));
+
+        JLabel title = new JLabel("Error");
+        title.setForeground(Color.WHITE);
+        title.setFont(new Font("SansSerif", Font.BOLD, 16));
+        title.setBorder(new EmptyBorder(0, 15, 0, 0));
+
+        JLabel warningIcon = new JLabel(loadIcon("Warning.png", 24, 24));
+        warningIcon.setBorder(new EmptyBorder(0, 0, 0, 15));
+
+        header.add(title, BorderLayout.WEST);
+        header.add(warningIcon, BorderLayout.EAST);
+
+        JPanel body = new JPanel();
+        body.setBackground(new Color(245, 240, 235));
+        body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
+
+        JLabel text = new JLabel(message);
+        text.setFont(new Font("SansSerif", Font.PLAIN, 15));
+        text.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton okButton = createRoundedButton("OK");
+        okButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        Dimension okSize = new Dimension(140, 55);
+        okButton.setPreferredSize(okSize);
+        okButton.setMinimumSize(okSize);
+        okButton.setMaximumSize(okSize);
+
+        body.add(Box.createVerticalStrut(28));
+        body.add(text);
+        body.add(Box.createVerticalStrut(35));
+        body.add(okButton);
+        body.add(Box.createVerticalStrut(20));
+
+        okButton.addActionListener(e -> dialog.dispose());
+
+        main.add(header, BorderLayout.NORTH);
+        main.add(body, BorderLayout.CENTER);
+
+        dialog.add(main);
+        dialog.setVisible(true);
     }
 
     private ImageIcon loadIcon(String fileName, int w, int h) {
@@ -234,7 +349,6 @@ public class WaitStaffFloorFrame extends JFrame {
         button.setOpaque(false);
         button.setPreferredSize(new Dimension(180, 60));
 
-
         button.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
             public void paint(Graphics g, JComponent c) {
                 Graphics2D g2 = (Graphics2D) g;
@@ -245,5 +359,81 @@ public class WaitStaffFloorFrame extends JFrame {
         });
 
         return button;
+    }
+
+    private void showLogoutPopup() {
+        JDialog dialog = new JDialog(this, true);
+        dialog.setSize(420, 220);
+        dialog.setLocationRelativeTo(this);
+        dialog.setUndecorated(true);
+
+        JPanel main = new JPanel(new BorderLayout());
+        main.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+
+        // ===== HEADER =====
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(new Color(145, 26, 26));
+        header.setPreferredSize(new Dimension(420, 55));
+
+        JLabel title = new JLabel("Logout");
+        title.setForeground(Color.WHITE);
+        title.setFont(new Font("SansSerif", Font.BOLD, 16));
+        title.setBorder(new EmptyBorder(0, 15, 0, 0));
+
+        JLabel icon = new JLabel(loadIcon("Warning.png", 24, 24));
+        icon.setBorder(new EmptyBorder(0, 0, 0, 15));
+
+        header.add(title, BorderLayout.WEST);
+        header.add(icon, BorderLayout.EAST);
+
+        // ===== BODY =====
+        JPanel body = new JPanel();
+        body.setBackground(new Color(245, 240, 235));
+        body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
+
+        JLabel message = new JLabel("Are you sure you want to logout?");
+        message.setFont(new Font("SansSerif", Font.PLAIN, 15));
+        message.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JPanel buttonRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
+        buttonRow.setOpaque(false);
+
+        JButton cancelButton = createRoundedButton("Cancel");
+        JButton logoutButton = createRoundedButton("Logout");
+
+        Dimension btnSize = new Dimension(140, 55);
+
+        cancelButton.setPreferredSize(btnSize);
+        cancelButton.setMinimumSize(btnSize);
+        cancelButton.setMaximumSize(btnSize);
+
+        logoutButton.setPreferredSize(btnSize);
+        logoutButton.setMinimumSize(btnSize);
+        logoutButton.setMaximumSize(btnSize);
+
+        buttonRow.add(cancelButton);
+        buttonRow.add(logoutButton);
+
+        body.add(Box.createVerticalStrut(28));
+        body.add(message);
+        body.add(Box.createVerticalStrut(30));
+        body.add(buttonRow);
+        body.add(Box.createVerticalStrut(20));
+
+        // ===== ACTIONS =====
+        cancelButton.addActionListener(e -> dialog.dispose());
+
+        logoutButton.addActionListener(e -> {
+            dialog.dispose();
+            new LoginFrame();
+            dispose();
+        });
+
+        // ===== BUILD =====
+        main.add(header, BorderLayout.NORTH);
+        main.add(body, BorderLayout.CENTER);
+
+        dialog.add(main);
+        dialog.setVisible(true);
     }
 }
