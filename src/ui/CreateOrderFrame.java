@@ -521,7 +521,7 @@ public class CreateOrderFrame extends JFrame {
 
         okBtn.addActionListener(e -> dialog.dispose());
 
-        // spacing (matches your other popups)
+        // spacing
         body.add(Box.createVerticalStrut(25));
         body.add(message);
         body.add(Box.createVerticalStrut(25));
@@ -578,7 +578,7 @@ public class CreateOrderFrame extends JFrame {
 
         okBtn.addActionListener(e -> dialog.dispose());
 
-        // spacing (IMPORTANT for matching your other popups)
+        // spacing
         body.add(Box.createVerticalStrut(25));
         body.add(message);
         body.add(Box.createVerticalStrut(25));
