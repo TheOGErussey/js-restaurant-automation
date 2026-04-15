@@ -66,7 +66,7 @@ public class CreateOrderFrame extends JFrame {
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         leftPanel.setBackground(new Color(222, 208, 187));
         leftPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
-        leftPanel.setPreferredSize(new Dimension(350, 600));
+        leftPanel.setPreferredSize(new Dimension(420, 600));
 
         JLabel tableLabel = new JLabel("Table: " + tableName);
         tableLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
@@ -79,26 +79,59 @@ public class CreateOrderFrame extends JFrame {
         orderTable.setRowHeight(30);
 
         JScrollPane scrollPane = new JScrollPane(orderTable);
-        scrollPane.setPreferredSize(new Dimension(300, 150));
+        scrollPane.setPreferredSize(new Dimension(360, 180));
 
         JTextArea notes = new JTextArea(6, 20);
         notes.setBorder(BorderFactory.createTitledBorder("Notes"));
 
-        JButton backBtn = createRoundedButton("Cancel");
-        backBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JButton cancelBtn = createRoundedButton("Cancel");
+        JButton sendBtn = createRoundedButton("Send");
 
-        backBtn.addActionListener(e -> {
+        Dimension buttonSize = new Dimension(140, 50);
+
+        cancelBtn.setPreferredSize(buttonSize);
+        cancelBtn.setMaximumSize(buttonSize);
+        cancelBtn.setMinimumSize(buttonSize);
+
+        sendBtn.setPreferredSize(buttonSize);
+        sendBtn.setMaximumSize(buttonSize);
+        sendBtn.setMinimumSize(buttonSize);
+
+        // This damn button row
+        JPanel buttonRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
+        buttonRow.setMaximumSize(new Dimension(350, 70));
+        buttonRow.setAlignmentX(Component.LEFT_ALIGNMENT);
+        buttonRow.setOpaque(false);
+
+        buttonRow.add(cancelBtn);  // LEFT
+        buttonRow.add(sendBtn);    // RIGHT
+
+        cancelBtn.addActionListener(e -> {
             new ManageOrderFrame(tableName, status);
             dispose();
         });
 
+        sendBtn.addActionListener(e -> {
+
+            if (tableModel.getRowCount() == 0) {
+                showEmptyOrderError();
+                return;
+            }
+
+            showSendPopup();
+        });
+
         tableLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
         notes.setAlignmentX(Component.LEFT_ALIGNMENT);
 
+        // scroll pane
+        scrollPane.setPreferredSize(new Dimension(360, 220));
+        scrollPane.setMaximumSize(new Dimension(360, 220));
+        scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         JScrollPane notesScroll = new JScrollPane(notes);
-        notesScroll.setPreferredSize(new Dimension(300, 120));
-        notesScroll.setMaximumSize(new Dimension(300, 120));
+        notesScroll.setPreferredSize(new Dimension(360, 180));
+        notesScroll.setMaximumSize(new Dimension(360, 180));
         notesScroll.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         leftPanel.add(tableLabel);
@@ -106,8 +139,8 @@ public class CreateOrderFrame extends JFrame {
         leftPanel.add(scrollPane);
         leftPanel.add(Box.createVerticalStrut(10));
         leftPanel.add(notesScroll);
-        leftPanel.add(Box.createVerticalStrut(20));
-        leftPanel.add(backBtn);
+        leftPanel.add(Box.createVerticalStrut(60));
+        leftPanel.add(buttonRow);
 
         // ===== CATEGORY PANEL =====
         JPanel categoryPanel = new JPanel();
@@ -436,6 +469,110 @@ public class CreateOrderFrame extends JFrame {
         body.add(message);
         body.add(Box.createVerticalStrut(30));
         body.add(buttonRow);
+
+        main.add(header, BorderLayout.NORTH);
+        main.add(body, BorderLayout.CENTER);
+
+        dialog.add(main);
+        dialog.setVisible(true);
+    }
+
+    private void showSendPopup() {
+
+        JDialog dialog = new JDialog(this, true);
+        dialog.setSize(420, 220);
+        dialog.setLocationRelativeTo(this);
+        dialog.setUndecorated(true);
+
+        JPanel main = new JPanel(new BorderLayout());
+        main.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+
+        // HEADER
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(new Color(145, 26, 26));
+        header.setPreferredSize(new Dimension(420, 55));
+
+        JLabel title = new JLabel("Success");
+        title.setForeground(Color.WHITE);
+        title.setFont(new Font("SansSerif", Font.BOLD, 16));
+        title.setBorder(new EmptyBorder(0, 15, 0, 0));
+
+        JLabel icon = new JLabel(loadIcon("Check.png", 24, 24));
+        icon.setBorder(new EmptyBorder(0, 0, 0, 15));
+
+        header.add(title, BorderLayout.WEST);
+        header.add(icon, BorderLayout.EAST);
+
+        // BODY
+        JPanel body = new JPanel();
+        body.setBackground(new Color(245, 240, 235));
+        body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
+
+        JLabel message = new JLabel("Order sent to kitchen!");
+        message.setFont(new Font("SansSerif", Font.PLAIN, 15));
+        message.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton okBtn = createRoundedButton("OK");
+        okBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        okBtn.addActionListener(e -> dialog.dispose());
+
+        body.add(Box.createVerticalStrut(30));
+        body.add(message);
+        body.add(Box.createVerticalStrut(30));
+        body.add(okBtn);
+
+        main.add(header, BorderLayout.NORTH);
+        main.add(body, BorderLayout.CENTER);
+
+        dialog.add(main);
+        dialog.setVisible(true);
+    }
+
+    private void showEmptyOrderError() {
+
+        JDialog dialog = new JDialog(this, true);
+        dialog.setSize(420, 220);
+        dialog.setLocationRelativeTo(this);
+        dialog.setUndecorated(true);
+
+        JPanel main = new JPanel(new BorderLayout());
+        main.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+
+        // ===== HEADER =====
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(new Color(145, 26, 26));
+        header.setPreferredSize(new Dimension(420, 55));
+
+        JLabel title = new JLabel("Error");
+        title.setForeground(Color.WHITE);
+        title.setFont(new Font("SansSerif", Font.BOLD, 16));
+        title.setBorder(new EmptyBorder(0, 15, 0, 0));
+
+        JLabel icon = new JLabel(loadIcon("Warning.png", 24, 24));
+        icon.setBorder(new EmptyBorder(0, 0, 0, 15));
+
+        header.add(title, BorderLayout.WEST);
+        header.add(icon, BorderLayout.EAST);
+
+        // ===== BODY =====
+        JPanel body = new JPanel();
+        body.setBackground(new Color(245, 240, 235));
+        body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
+
+        JLabel message = new JLabel("Cannot send an empty order.");
+        message.setFont(new Font("SansSerif", Font.PLAIN, 15));
+        message.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton okBtn = createRoundedButton("OK");
+        okBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        okBtn.addActionListener(e -> dialog.dispose());
+
+        body.add(Box.createVerticalStrut(30));
+        body.add(message);
+        body.add(Box.createVerticalStrut(30));
+        body.add(okBtn);
 
         main.add(header, BorderLayout.NORTH);
         main.add(body, BorderLayout.CENTER);
