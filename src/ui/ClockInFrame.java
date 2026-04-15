@@ -66,7 +66,7 @@ public class ClockInFrame extends JFrame {
         JLabel clockIcon = new JLabel(loadIcon("Clock.png", 30, 30));
 
         statusLabel = new JLabel("Current Status: Not Clocked In");
-        statusLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
+        statusLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
 
         statusRow.add(clockIcon);
         statusRow.add(statusLabel);
@@ -113,7 +113,7 @@ public class ClockInFrame extends JFrame {
             if (!isClockedIn) {
                 isClockedIn = true;
                 statusLabel.setText("Current Status: Clocked In");
-                clockButton.setText("Clock Out");
+                clockButton.setText("Clock In");
 
                 showSuccessPopup();
 
@@ -204,7 +204,7 @@ public class ClockInFrame extends JFrame {
         body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
 
         JLabel message = new JLabel("Clock in successful.");
-        message.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        message.setFont(new Font("SansSerif", Font.PLAIN, 18));
         message.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JButton okButton = createRoundedButton("OK");

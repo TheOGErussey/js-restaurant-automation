@@ -48,7 +48,7 @@ public class LoginFrame extends JFrame {
         cardHeader.setPreferredSize(new Dimension(420, 80));
 
         JLabel loginTitle = new JLabel("Login");
-        loginTitle.setFont(new Font("SansSerif", Font.BOLD, 18));
+        loginTitle.setFont(new Font("SansSerif", Font.BOLD, 22));
         loginTitle.setForeground(Color.WHITE);
 
         cardHeader.add(loginTitle);

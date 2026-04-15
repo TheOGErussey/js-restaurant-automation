@@ -14,7 +14,7 @@ public class ManageOrderFrame extends JFrame {
     private final Color OCCUPIED = new Color(240, 200, 80);
     private final Color DIRTY = new Color(230, 50, 50);
 
-    public ManageOrderFrame() {
+    public ManageOrderFrame(String tableName, String status) {
 
         setTitle("Manage Order - J's Corner Restaurant");
         setSize(1280, 720);
@@ -47,6 +47,14 @@ public class ManageOrderFrame extends JFrame {
 
         JLabel logout = new JLabel("Logout");
         logout.setForeground(Color.WHITE);
+        logout.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        logout.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                showLogoutPopup();
+            }
+        });
 
         rightHeader.add(welcome);
         rightHeader.add(logout);
@@ -137,22 +145,31 @@ public class ManageOrderFrame extends JFrame {
         sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
         sidePanel.setBackground(new Color(245, 240, 235));
         sidePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 6));
-        sidePanel.setPreferredSize(new Dimension(320, 420));
+        sidePanel.setPreferredSize(new Dimension(360, 520));
 
-        selectedTableLabel = new JLabel("Table Selected: None");
+        selectedTableLabel = new JLabel("Table Selected: " + tableName);
         selectedTableLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
         selectedTableLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        statusLabel = new JLabel("Status:");
+        statusLabel = new JLabel("Status: " + status);
         statusLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
         statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // BUTTONS
         JButton createOrderBtn = createRoundedButton("Create Order");
+        createOrderBtn.addActionListener(e -> {
+            new CreateOrderFrame(tableName, status);
+            dispose();
+        });
+
         JButton updateOrderBtn = createRoundedButton("Update Order");
         JButton orderStatusBtn = createRoundedButton("Order Status");
         JButton checkoutBtn = createRoundedButton("Checkout");
         JButton cancelBtn = createRoundedButton("Cancel");
+        cancelBtn.addActionListener(e -> {
+            new WaitStaffFloorFrame(tableName, status); // go back with same data
+            dispose();
+        });
 
         Dimension btnSize = new Dimension(180, 60);
 
@@ -244,9 +261,11 @@ public class ManageOrderFrame extends JFrame {
 
     private JButton createRoundedButton(String text) {
         JButton button = new JButton(text);
+        button.setFont(new Font("SansSerif", Font.BOLD, 18));
 
         button.setForeground(Color.WHITE);
         button.setBackground(new Color(145, 26, 26));
+
 
         button.setFocusPainted(false);
         button.setBorderPainted(false);
@@ -263,5 +282,75 @@ public class ManageOrderFrame extends JFrame {
         });
 
         return button;
+    }
+
+    private void showLogoutPopup() {
+        JDialog dialog = new JDialog(this, true);
+        dialog.setSize(420, 220);
+        dialog.setLocationRelativeTo(this);
+        dialog.setUndecorated(true);
+
+        JPanel main = new JPanel(new BorderLayout());
+        main.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(new Color(145, 26, 26));
+        header.setPreferredSize(new Dimension(420, 55));
+
+        JLabel title = new JLabel("Logout");
+        title.setForeground(Color.WHITE);
+        title.setFont(new Font("SansSerif", Font.BOLD, 16));
+        title.setBorder(new EmptyBorder(0, 15, 0, 0));
+        JLabel icon = new JLabel(loadIcon("Warning.png", 24, 24));
+        icon.setBorder(new EmptyBorder(0, 0, 0, 15));
+
+        header.add(title, BorderLayout.WEST);
+        header.add(icon, BorderLayout.EAST);
+
+        JPanel body = new JPanel();
+        body.setBackground(new Color(245, 240, 235));
+        body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
+
+        JLabel message = new JLabel("Are you sure you want to logout?");
+        message.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        message.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JPanel buttonRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
+        buttonRow.setOpaque(false);
+
+        JButton cancelBtn = createRoundedButton("Cancel");
+        JButton logoutBtn = createRoundedButton("Logout");
+
+        Dimension size = new Dimension(140, 55);
+
+        cancelBtn.setPreferredSize(size);
+        cancelBtn.setMinimumSize(size);
+        cancelBtn.setMaximumSize(size);
+
+        logoutBtn.setPreferredSize(size);
+        logoutBtn.setMinimumSize(size);
+        logoutBtn.setMaximumSize(size);
+
+        cancelBtn.addActionListener(e -> dialog.dispose());
+
+        logoutBtn.addActionListener(e -> {
+            dialog.dispose();
+            new LoginFrame();
+            dispose();
+        });
+
+        buttonRow.add(cancelBtn);
+        buttonRow.add(logoutBtn);
+
+        body.add(Box.createVerticalStrut(30));
+        body.add(message);
+        body.add(Box.createVerticalStrut(30));
+        body.add(buttonRow);
+
+        main.add(header, BorderLayout.NORTH);
+        main.add(body, BorderLayout.CENTER);
+
+        dialog.add(main);
+        dialog.setVisible(true);
     }
 }

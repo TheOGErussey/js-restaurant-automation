@@ -22,7 +22,6 @@ public class WaitStaffFloorFrame extends JFrame {
     private final Map<JButton, String> tableNames = new HashMap<>();
 
     public WaitStaffFloorFrame() {
-
         setTitle("Wait Staff - J's Corner Restaurant");
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -200,7 +199,25 @@ public class WaitStaffFloorFrame extends JFrame {
 
         // ===== ACTIONS =====
         orderBtn.addActionListener(e -> {
-            new ManageOrderFrame();
+
+            if (selectedTableButton == null) {
+                showErrorPopup("Please select a table first.");
+                return;
+            }
+
+            String currentStatus = tableStatuses.get(selectedTableButton);
+
+            if ("Dirty".equals(currentStatus)) {
+                showErrorPopup("Cannot manage order for a dirty table.");
+                return;
+            }
+
+            // GET TABLE NAME + STATUS
+            String tableName = selectedTableLabel.getText().replace("Table Selected: ", "");
+            String status = currentStatus;
+
+            // PASS INTO NEXT SCREEN
+            new ManageOrderFrame(tableName, status);
             dispose();
         });
 
@@ -237,10 +254,19 @@ public class WaitStaffFloorFrame extends JFrame {
         setVisible(true);
     }
 
+    public WaitStaffFloorFrame(String tableName, String status) {
+        this();
+
+        selectedTableLabel.setText("Table Selected: " + tableName);
+        statusLabel.setText("Status: " + status);
+    }
+
     // ===== TABLE METHOD =====
     private void addTable(JPanel panel, String name, String status, int x, int y, GridBagConstraints gbc) {
         JButton btn = new JButton(name);
         Dimension size = new Dimension(85, 75);
+
+        btn.setFont(new Font("SansSerif", Font.BOLD, 18));
 
         btn.setPreferredSize(size);
         btn.setMinimumSize(size);
@@ -307,7 +333,7 @@ public class WaitStaffFloorFrame extends JFrame {
         body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
 
         JLabel text = new JLabel(message);
-        text.setFont(new Font("SansSerif", Font.PLAIN, 15));
+        text.setFont(new Font("SansSerif", Font.PLAIN, 18));
         text.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JButton okButton = createRoundedButton("OK");
@@ -392,7 +418,7 @@ public class WaitStaffFloorFrame extends JFrame {
         body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
 
         JLabel message = new JLabel("Are you sure you want to logout?");
-        message.setFont(new Font("SansSerif", Font.PLAIN, 15));
+        message.setFont(new Font("SansSerif", Font.PLAIN, 18));
         message.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JPanel buttonRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
