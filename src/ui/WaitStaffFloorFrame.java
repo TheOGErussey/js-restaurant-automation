@@ -12,14 +12,12 @@ public class WaitStaffFloorFrame extends JFrame {
     private JLabel statusLabel;
 
     private JButton selectedTableButton = null;
-    private String selectedTableName = null;
 
     private final Color OPEN = new Color(110, 200, 80);
     private final Color OCCUPIED = new Color(240, 200, 80);
     private final Color DIRTY = new Color(230, 50, 50);
 
     private final Map<JButton, String> tableStatuses = new HashMap<>();
-    private final Map<JButton, String> tableNames = new HashMap<>();
 
     public WaitStaffFloorFrame() {
 
