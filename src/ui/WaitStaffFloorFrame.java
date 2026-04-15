@@ -12,7 +12,6 @@ public class WaitStaffFloorFrame extends JFrame {
     private JLabel statusLabel;
 
     private JButton selectedTableButton = null;
-    private String selectedTableName = null;
 
     private final Color OPEN = new Color(110, 200, 80);
     private final Color OCCUPIED = new Color(240, 200, 80);
@@ -223,7 +222,6 @@ public class WaitStaffFloorFrame extends JFrame {
 
         cancelBtn.addActionListener(e -> {
             selectedTableButton = null;
-            selectedTableName = null;
             selectedTableLabel.setText("Table Selected: None");
             statusLabel.setText("Status: ");
         });
@@ -280,7 +278,6 @@ public class WaitStaffFloorFrame extends JFrame {
 
         btn.addActionListener(e -> {
             selectedTableButton = btn;
-            selectedTableName = name;
 
             selectedTableLabel.setText("Table Selected: " + name);
             statusLabel.setText("Status: " + tableStatuses.get(btn));

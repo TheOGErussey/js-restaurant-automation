@@ -32,7 +32,7 @@ public class CreateOrderFrame extends JFrame {
         JPanel leftHeader = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 25));
         leftHeader.setOpaque(false);
 
-        JLabel title = new JLabel("Create Order");
+        JLabel title = new JLabel("Create Order", loadIcon("Fork.png", 45, 45), JLabel.LEFT);
         title.setFont(new Font("Serif", Font.BOLD, 28));
         title.setForeground(new Color(245, 230, 211));
 
@@ -46,6 +46,14 @@ public class CreateOrderFrame extends JFrame {
 
         JLabel logout = new JLabel("Logout");
         logout.setForeground(Color.WHITE);
+        logout.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        logout.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                showLogoutPopup();
+            }
+        });
 
         rightHeader.add(welcome);
         rightHeader.add(logout);
@@ -84,11 +92,20 @@ public class CreateOrderFrame extends JFrame {
             dispose();
         });
 
+        tableLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
+        notes.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JScrollPane notesScroll = new JScrollPane(notes);
+        notesScroll.setPreferredSize(new Dimension(300, 120));
+        notesScroll.setMaximumSize(new Dimension(300, 120));
+        notesScroll.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         leftPanel.add(tableLabel);
         leftPanel.add(Box.createVerticalStrut(10));
         leftPanel.add(scrollPane);
         leftPanel.add(Box.createVerticalStrut(10));
-        leftPanel.add(notes);
+        leftPanel.add(notesScroll);
         leftPanel.add(Box.createVerticalStrut(20));
         leftPanel.add(backBtn);
 
@@ -105,6 +122,7 @@ public class CreateOrderFrame extends JFrame {
 
         for (String cat : categories) {
             JButton btn = createRoundedButton(cat);
+            btn.setFont(new Font("SansSerif", Font.BOLD, 18));
 
             btn.setAlignmentX(Component.CENTER_ALIGNMENT);
             btn.setMaximumSize(new Dimension(180, 60));
@@ -142,37 +160,93 @@ public class CreateOrderFrame extends JFrame {
         String[] items;
 
         switch (category) {
+
             case "Appetizers":
-                items = new String[]{"Shrimp & Grits", "Caribbean Chicken"};
+                items = new String[]{
+                        "Chicken Nachos",
+                        "Pork Nachos",
+                        "Sliders (Pork/Chicken)",
+                        "Catfish Bites",
+                        "Fried Veggies"
+                };
                 break;
 
             case "Salads":
-                items = new String[]{"Caesar Salad", "House Salad"};
+                items = new String[]{
+                        "House Salad",
+                        "Wedge Salad",
+                        "Caesar Salad",
+                        "Sweet Potato Chicken Salad"
+                };
                 break;
 
             case "Entrees":
                 items = new String[]{
+                        "Shrimp & Grits",
                         "Sweet Tea Fried Chicken",
+                        "Caribbean Chicken",
+                        "Grilled Pork Chops",
                         "New York Strip Steak",
-                        "Grilled Porkchops",
                         "Seared Tuna",
-                        "Captain Crunch Chicken",
+                        "Captain Crunch Chicken Tenders",
                         "Grouper Fingers",
                         "Mac & Cheese Bar"
                 };
                 break;
 
+            case "Sides":
+                items = new String[]{
+                        "Curly Fries",
+                        "Wing Chips",
+                        "Sweet Potato Fries",
+                        "Cabbage Slaw",
+                        "Cheese Grits",
+                        "Mashed Potatoes",
+                        "Mac & Cheese",
+                        "Vegetables",
+                        "Baked Beans"
+                };
+                break;
+
+            case "Sandwiches":
+                items = new String[]{
+                        "Grilled Cheese",
+                        "Chicken BLT&A",
+                        "Philly",
+                        "Club",
+                        "Meatball Sub"
+                };
+                break;
+
+            case "Burgers":
+                items = new String[]{
+                        "Bacon Cheeseburger",
+                        "Carolina Burger",
+                        "Portobello Burger",
+                        "Vegan Boca Burger"
+                };
+                break;
+
             case "Beverages":
-                items = new String[]{"Tea", "Soda", "Water"};
+                items = new String[]{
+                        "Tea",
+                        "Coke",
+                        "Diet Coke",
+                        "Sprite",
+                        "Water",
+                        "Lemonade",
+                        "Orange Juice"
+                };
                 break;
 
             default:
-                items = new String[]{"Item 1", "Item 2"};
+                items = new String[]{"No Items"};
         }
 
         for (String item : items) {
 
             JButton btn = createRoundedButton(item);
+
             btn.setPreferredSize(new Dimension(160, 120));
             btn.setFont(new Font("SansSerif", Font.BOLD, 14));
 
@@ -190,7 +264,26 @@ public class CreateOrderFrame extends JFrame {
 
         double price = getPrice(item);
 
-        tableModel.addRow(new Object[]{1, item, price});
+        // Check if item already exists
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+
+            String existingItem = (String) tableModel.getValueAt(i, 1);
+
+            if (existingItem.equals(item)) {
+
+                int qty = (int) tableModel.getValueAt(i, 0);
+                tableModel.setValueAt(qty + 1, i, 0);
+
+                return; // stop here, don't add new row
+            }
+        }
+
+        // If item not found, add new row
+        tableModel.addRow(new Object[]{
+                1,
+                item,
+                String.format("%.2f", price)
+        });
 
         System.out.println("Order added: " + item);
     }
@@ -198,18 +291,64 @@ public class CreateOrderFrame extends JFrame {
     // ===== PRICE =====
     private double getPrice(String item) {
         switch (item) {
-            case "Shrimp & Grits": return 14.99;
-            case "Sweet Tea Fried Chicken": return 12.99;
-            case "New York Strip Steak": return 19.99;
-            case "Seared Tuna": return 17.99;
-            case "Mac & Cheese Bar": return 6.99;
-            default: return 9.99;
+            case "Chicken Nachos": return 8.50;
+            case "Pork Nachos": return 8.50;
+            case "Sliders (Pork/Chicken)": return 5.00;
+            case "Catfish Bites": return 6.50;
+            case "Fried Veggies": return 6.50;
+
+            case "House Salad": return 7.50;
+            case "Wedge Salad": return 7.50;
+            case "Caesar Salad": return 7.50;
+            case "Sweet Potato Chicken Salad": return 11.50;
+
+            case "Shrimp & Grits": return 13.50;
+            case "Sweet Tea Fried Chicken": return 11.50;
+            case "Caribbean Chicken": return 11.50;
+            case "Grilled Pork Chops": return 11.00;
+            case "New York Strip Steak": return 17.00;
+            case "Seared Tuna": return 15.00;
+            case "Captain Crunch Chicken Tenders": return 11.50;
+            case "Grouper Fingers": return 11.50;
+            case "Mac & Cheese Bar": return 8.50;
+
+            case "Curly Fries": return 2.50;
+            case "Wing Chips": return 2.50;
+            case "Sweet Potato Fries": return 2.50;
+            case "Cabbage Slaw": return 2.50;
+            case "Cheese Grits": return 2.50;
+            case "Mashed Potatoes": return 2.50;
+            case "Mac & Cheese": return 2.50;
+            case "Vegetables": return 2.50;
+            case "Baked Beans": return 2.50;
+
+            case "Grilled Cheese": return 5.50;
+            case "Chicken BLT&A": return 10.00;
+            case "Philly": return 13.50;
+            case "Club": return 10.00;
+            case "Meatball Sub": return 10.00;
+
+            case "Bacon Cheeseburger": return 11.00;
+            case "Carolina Burger": return 11.00;
+            case "Portobello Burger": return 8.50;
+            case "Vegan Boca Burger": return 10.50;
+
+            case "Tea": return 2.00;
+            case "Coke": return 2.00;
+            case "Diet Coke": return 2.00;
+            case "Sprite": return 2.00;
+            case "Water": return 2.00;
+            case "Lemonade": return 2.00;
+            case "Orange Juice": return 2.00;
+
+            default: return 0.0;
         }
     }
 
     // ===== BUTTON STYLE =====
     private JButton createRoundedButton(String text) {
         JButton button = new JButton(text);
+        button.setFont(new Font("SansSerif", Font.BOLD, 16));
         button.setForeground(Color.WHITE);
         button.setBackground(new Color(145, 26, 26));
         button.setFocusPainted(false);
@@ -227,5 +366,81 @@ public class CreateOrderFrame extends JFrame {
         });
 
         return button;
+    }
+
+    private ImageIcon loadIcon(String fileName, int w, int h) {
+        ImageIcon icon = new ImageIcon("src/icons/" + fileName);
+        Image img = icon.getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH);
+        return new ImageIcon(img);
+    }
+
+    private void showLogoutPopup() {
+        JDialog dialog = new JDialog(this, true);
+        dialog.setSize(420, 220);
+        dialog.setLocationRelativeTo(this);
+        dialog.setUndecorated(true);
+
+        JPanel main = new JPanel(new BorderLayout());
+        main.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(new Color(145, 26, 26));
+        header.setPreferredSize(new Dimension(420, 55));
+
+        JLabel title = new JLabel("Logout");
+        title.setForeground(Color.WHITE);
+        title.setFont(new Font("SansSerif", Font.BOLD, 16));
+        title.setBorder(new EmptyBorder(0, 15, 0, 0));
+        JLabel icon = new JLabel(loadIcon("Warning.png", 24, 24));
+        icon.setBorder(new EmptyBorder(0, 0, 0, 15));
+
+        header.add(title, BorderLayout.WEST);
+        header.add(icon, BorderLayout.EAST);
+
+        JPanel body = new JPanel();
+        body.setBackground(new Color(245, 240, 235));
+        body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
+
+        JLabel message = new JLabel("Are you sure you want to logout?");
+        message.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        message.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JPanel buttonRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
+        buttonRow.setOpaque(false);
+
+        JButton cancelBtn = createRoundedButton("Cancel");
+        JButton logoutBtn = createRoundedButton("Logout");
+
+        Dimension size = new Dimension(140, 55);
+
+        cancelBtn.setPreferredSize(size);
+        cancelBtn.setMinimumSize(size);
+        cancelBtn.setMaximumSize(size);
+
+        logoutBtn.setPreferredSize(size);
+        logoutBtn.setMinimumSize(size);
+        logoutBtn.setMaximumSize(size);
+
+        cancelBtn.addActionListener(e -> dialog.dispose());
+
+        logoutBtn.addActionListener(e -> {
+            dialog.dispose();
+            new LoginFrame();
+            dispose();
+        });
+
+        buttonRow.add(cancelBtn);
+        buttonRow.add(logoutBtn);
+
+        body.add(Box.createVerticalStrut(30));
+        body.add(message);
+        body.add(Box.createVerticalStrut(30));
+        body.add(buttonRow);
+
+        main.add(header, BorderLayout.NORTH);
+        main.add(body, BorderLayout.CENTER);
+
+        dialog.add(main);
+        dialog.setVisible(true);
     }
 }
