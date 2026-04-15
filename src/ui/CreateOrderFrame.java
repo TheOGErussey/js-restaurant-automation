@@ -480,17 +480,17 @@ public class CreateOrderFrame extends JFrame {
     private void showSendPopup() {
 
         JDialog dialog = new JDialog(this, true);
-        dialog.setSize(420, 220);
+        dialog.setSize(400, 200);
         dialog.setLocationRelativeTo(this);
         dialog.setUndecorated(true);
 
-        JPanel main = new JPanel(new BorderLayout());
-        main.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 
-        // HEADER
+        // ===== HEADER =====
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(new Color(145, 26, 26));
-        header.setPreferredSize(new Dimension(420, 55));
+        header.setPreferredSize(new Dimension(400, 50));
 
         JLabel title = new JLabel("Success");
         title.setForeground(Color.WHITE);
@@ -503,46 +503,51 @@ public class CreateOrderFrame extends JFrame {
         header.add(title, BorderLayout.WEST);
         header.add(icon, BorderLayout.EAST);
 
-        // BODY
+        // ===== BODY =====
         JPanel body = new JPanel();
         body.setBackground(new Color(245, 240, 235));
         body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
 
         JLabel message = new JLabel("Order sent to kitchen!");
-        message.setFont(new Font("SansSerif", Font.PLAIN, 15));
+        message.setFont(new Font("SansSerif", Font.PLAIN, 18));
         message.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JButton okBtn = createRoundedButton("OK");
+
+        Dimension size = new Dimension(140, 45);
+        okBtn.setPreferredSize(size);
+        okBtn.setMaximumSize(size);
         okBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         okBtn.addActionListener(e -> dialog.dispose());
 
-        body.add(Box.createVerticalStrut(30));
+        // spacing (matches your other popups)
+        body.add(Box.createVerticalStrut(25));
         body.add(message);
-        body.add(Box.createVerticalStrut(30));
+        body.add(Box.createVerticalStrut(25));
         body.add(okBtn);
 
-        main.add(header, BorderLayout.NORTH);
-        main.add(body, BorderLayout.CENTER);
+        mainPanel.add(header, BorderLayout.NORTH);
+        mainPanel.add(body, BorderLayout.CENTER);
 
-        dialog.add(main);
+        dialog.add(mainPanel);
         dialog.setVisible(true);
     }
 
     private void showEmptyOrderError() {
 
         JDialog dialog = new JDialog(this, true);
-        dialog.setSize(420, 220);
+        dialog.setSize(400, 200);
         dialog.setLocationRelativeTo(this);
         dialog.setUndecorated(true);
 
-        JPanel main = new JPanel(new BorderLayout());
-        main.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 
         // ===== HEADER =====
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(new Color(145, 26, 26));
-        header.setPreferredSize(new Dimension(420, 55));
+        header.setPreferredSize(new Dimension(400, 50));
 
         JLabel title = new JLabel("Error");
         title.setForeground(Color.WHITE);
@@ -561,23 +566,28 @@ public class CreateOrderFrame extends JFrame {
         body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
 
         JLabel message = new JLabel("Cannot send an empty order.");
-        message.setFont(new Font("SansSerif", Font.PLAIN, 15));
+        message.setFont(new Font("SansSerif", Font.PLAIN, 18));
         message.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JButton okBtn = createRoundedButton("OK");
+
+        Dimension size = new Dimension(140, 45);
+        okBtn.setPreferredSize(size);
+        okBtn.setMaximumSize(size);
         okBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         okBtn.addActionListener(e -> dialog.dispose());
 
-        body.add(Box.createVerticalStrut(30));
+        // spacing (IMPORTANT for matching your other popups)
+        body.add(Box.createVerticalStrut(25));
         body.add(message);
-        body.add(Box.createVerticalStrut(30));
+        body.add(Box.createVerticalStrut(25));
         body.add(okBtn);
 
-        main.add(header, BorderLayout.NORTH);
-        main.add(body, BorderLayout.CENTER);
+        mainPanel.add(header, BorderLayout.NORTH);
+        mainPanel.add(body, BorderLayout.CENTER);
 
-        dialog.add(main);
+        dialog.add(mainPanel);
         dialog.setVisible(true);
     }
 }
