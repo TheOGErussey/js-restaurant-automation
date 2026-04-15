@@ -41,21 +41,21 @@ public class HomeFrame extends JFrame {
 
         // ===== ADDRESS =====
         JLabel address = new JLabel("680 Arntson Dr., Marietta, GA");
-        address.setFont(new Font("Serif", Font.PLAIN, 28));
-        address.setIcon(loadIcon("/icons/Pin.png", 60, 70));
+        address.setFont(new Font("Serif", Font.BOLD, 28));
+        address.setIcon(loadIcon("/icons/Pin.png", 50, 60));
         address.setIconTextGap(20);
         address.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // ===== HOURS =====
         JLabel hours = new JLabel("Monday - Saturday: 11AM - 9:30PM");
-        hours.setFont(new Font("Serif", Font.PLAIN, 28));
+        hours.setFont(new Font("Serif", Font.BOLD, 28));
         hours.setIcon(loadIcon("/icons/Clock.png", 60, 60));
         hours.setIconTextGap(20);
         hours.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // ===== PHONE =====
         JLabel phone = new JLabel("(470) 555-1212");
-        phone.setFont(new Font("Serif", Font.PLAIN, 28));
+        phone.setFont(new Font("Serif", Font.BOLD, 28));
         phone.setIcon(loadIcon("/icons/Phone.png", 49, 49));
         phone.setIconTextGap(20);
         phone.setAlignmentX(Component.CENTER_ALIGNMENT);
