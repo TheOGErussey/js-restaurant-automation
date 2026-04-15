@@ -11,6 +11,7 @@ public class CreateOrderFrame extends JFrame {
     private DefaultTableModel tableModel;
     private String tableName;
     private String status;
+    private static int orderCounter = 1;
 
     public CreateOrderFrame(String tableName, String status) {
 
@@ -118,6 +119,33 @@ public class CreateOrderFrame extends JFrame {
                 return;
             }
 
+            // ===== PRINT TO CONSOLE =====
+            System.out.println("=== ORDER #" + orderCounter + " ===");
+            System.out.println("Table: " + tableName);
+
+            for (int i = 0; i < tableModel.getRowCount(); i++) {
+                int qty = (int) tableModel.getValueAt(i, 0);
+                String item = (String) tableModel.getValueAt(i, 1);
+                String price = (String) tableModel.getValueAt(i, 2);
+
+                System.out.println(qty + "x " + item + " - $" + price);
+            }
+
+            String noteText = notes.getText().trim();
+
+            if (!noteText.isEmpty()) {
+                System.out.println("Notes: " + noteText);
+            }
+
+            System.out.println("-----------------------------");
+
+            orderCounter++;
+
+            // ===== CLEAR ORDER FROM SCREEN =====
+            tableModel.setRowCount(0);   // clears table
+            notes.setText("");           // clears notes
+
+            // ===== SHOW SUCCESS POPUP =====
             showSendPopup();
         });
 
@@ -318,7 +346,6 @@ public class CreateOrderFrame extends JFrame {
                 String.format("%.2f", price)
         });
 
-        System.out.println("Order added: " + item);
     }
 
     // ===== PRICE =====
