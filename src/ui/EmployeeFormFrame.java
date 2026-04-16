@@ -5,17 +5,15 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class ManageEmployeesFrame extends JFrame {
+public class EmployeeFormFrame extends JFrame {
 
-    private DefaultTableModel model;
-    private JTable table;
+    public EmployeeFormFrame(DefaultTableModel model, int row) {
 
-    public ManageEmployeesFrame() {
+        boolean isEdit = row >= 0;
 
-        setTitle("Manage Employees - J's Corner Restaurant");
+        setTitle(isEdit ? "Edit Employee" : "Add Employee");
         setSize(1280, 720);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
 
         // ===== HEADER =====
@@ -28,7 +26,7 @@ public class ManageEmployeesFrame extends JFrame {
 
         JLabel icon = new JLabel(loadIcon("Fork.png", 40, 40));
 
-        JLabel title = new JLabel("Manage Employees");
+        JLabel title = new JLabel(isEdit ? "Edit Employee" : "Add Employee");
         title.setForeground(Color.WHITE);
         title.setFont(new Font("Serif", Font.BOLD, 26));
 
@@ -43,9 +41,6 @@ public class ManageEmployeesFrame extends JFrame {
         welcome.setFont(new Font("SansSerif", Font.BOLD, 14));
 
         JLabel logout = new JLabel("Logout");
-        logout.setForeground(Color.WHITE);
-        logout.setFont(new Font("SansSerif", Font.BOLD, 14));
-
         logout.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         logout.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -53,6 +48,8 @@ public class ManageEmployeesFrame extends JFrame {
                 showLogoutPopup();
             }
         });
+        logout.setForeground(Color.WHITE);
+        logout.setFont(new Font("SansSerif", Font.BOLD, 14));
 
         rightHeader.add(welcome);
         rightHeader.add(logout);
@@ -67,18 +64,13 @@ public class ManageEmployeesFrame extends JFrame {
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
 
         String[] menuItems = {
-                "DASHBOARD",
-                "REFUND REQUESTS",
-                "MANAGE EMPLOYEES",
-                "MANAGE MENU",
-                "MANAGE INVENTORY",
-                "GENERATE REPORTS"
+                "DASHBOARD", "REFUND REQUESTS", "MANAGE EMPLOYEES",
+                "MANAGE MENU", "MANAGE INVENTORY", "GENERATE REPORTS"
         };
 
         for (String item : menuItems) {
             JButton btn = createSidebarButton(item);
 
-            // DASHBOARD BUTTON
             if (item.equals("DASHBOARD")) {
                 btn.addActionListener(e -> {
                     new ManagerFrame();
@@ -90,105 +82,126 @@ public class ManageEmployeesFrame extends JFrame {
             sidebar.add(btn);
         }
 
-
-
         // ===== MAIN CONTENT =====
-        JPanel content = new JPanel(new BorderLayout());
+        JPanel content = new JPanel();
         content.setBackground(new Color(220, 205, 185));
-        content.setBorder(new EmptyBorder(20, 30, 20, 30));
+        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
 
-        // TOP BAR
-        JPanel topBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 25, 15));
-        topBar.setOpaque(false);
+        JLabel sectionTitle = new JLabel("Employee Details");
+        sectionTitle.setFont(new Font("SansSerif", Font.BOLD, 24));
+        sectionTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JButton addBtn = createRoundedButton("+ Add Employee");
-        JButton editBtn = createRoundedButton("Edit");
-        JButton deleteBtn = createRoundedButton("Delete");
+        content.add(Box.createVerticalStrut(20));
+        content.add(sectionTitle);
+        content.add(Box.createVerticalStrut(20));
 
-        Dimension btnSize = new Dimension(180, 50);
+        // ===== CARD =====
+        JPanel card = new JPanel();
+        card.setBackground(new Color(245, 240, 235));
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBorder(new EmptyBorder(30, 50, 30, 50));
+        card.setMaximumSize(new Dimension(650, 500));
+        card.setPreferredSize(new Dimension(650, 500));
 
-        addBtn.setPreferredSize(btnSize);
-        editBtn.setPreferredSize(btnSize);
-        deleteBtn.setPreferredSize(btnSize);
+        // ===== FIELDS =====
+        JTextField nameField = new JTextField();
+        JTextField usernameField = new JTextField();
+        JTextField tablesField = new JTextField();
 
-        addBtn.setMinimumSize(btnSize);
-        editBtn.setMinimumSize(btnSize);
-        deleteBtn.setMinimumSize(btnSize);
+        String[] roles = {"Waiter", "Cook", "Busboy", "Manager"};
+        JComboBox<String> roleBox = new JComboBox<>(roles);
 
-        addBtn.setMaximumSize(btnSize);
-        editBtn.setMaximumSize(btnSize);
-        deleteBtn.setMaximumSize(btnSize);
-
-        topBar.add(addBtn);
-        topBar.add(editBtn);
-        topBar.add(deleteBtn);
-
-        // ===== TABLE =====
-        model = new DefaultTableModel(
-                new Object[]{"Name", "Role", "Username", "Tables"}, 0
-        );
-
-        table = new JTable(model);
-        table.setRowHeight(35);
-        table.setFont(new Font("SansSerif", Font.PLAIN, 15));
-
-        // CENTER TEXT
-        javax.swing.table.DefaultTableCellRenderer center =
-                new javax.swing.table.DefaultTableCellRenderer();
-        center.setHorizontalAlignment(JLabel.CENTER);
-
-        for (int i = 0; i < table.getColumnCount(); i++) {
-            table.getColumnModel().getColumn(i).setCellRenderer(center);
+        // PREFILL IF EDIT
+        if (isEdit) {
+            nameField.setText((String) model.getValueAt(row, 0));
+            roleBox.setSelectedItem(model.getValueAt(row, 1));
+            usernameField.setText((String) model.getValueAt(row, 2));
+            tablesField.setText((String) model.getValueAt(row, 3));
         }
 
-        // HEADER STYLE
-        table.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 16));
-        table.getTableHeader().setBackground(new Color(145, 26, 26));
-        table.getTableHeader().setForeground(Color.WHITE);
+        card.add(createField("Name:", nameField));
+        card.add(createField("Role:", roleBox));
+        card.add(createField("Username:", usernameField));
+        card.add(createField("Tables:", tablesField));
 
-        JScrollPane scroll = new JScrollPane(table);
+        card.add(Box.createVerticalStrut(20));
 
-        // ===== SAMPLE DATA (REQUIRED) =====
-        model.addRow(new Object[]{"Alice Brown", "Waiter", "ABrown1", "A1, A2"});
-        model.addRow(new Object[]{"Chris Lee", "Waiter", "CLee2", "B1"});
-        model.addRow(new Object[]{"Maya Patel", "Waiter", "MPatel3", "C3"});
+        // ===== BUTTONS =====
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 10));
+        btnPanel.setOpaque(false);
 
-        model.addRow(new Object[]{"John Smith", "Cook", "JSmith4", "-"});
-        model.addRow(new Object[]{"Luis Gomez", "Cook", "LGomez5", "-"});
-        model.addRow(new Object[]{"Emma Davis", "Cook", "EDavis6", "-"});
+        JButton cancelBtn = createRoundedButton("Cancel");
+        JButton saveBtn = createRoundedButton("Save");
 
-        // ===== BUTTON ACTIONS =====
+        btnPanel.add(cancelBtn);
+        btnPanel.add(saveBtn);
 
-        // ADD
-        addBtn.addActionListener(e -> {
-            new EmployeeFormFrame(model, -1);
-        });
+        card.add(btnPanel);
 
-        // EDIT
-        editBtn.addActionListener(e -> {
-            int row = table.getSelectedRow();
-            if (row != -1) {
-                new EmployeeFormFrame(model, row);
+        content.add(card);
+
+        // ===== ACTIONS =====
+        cancelBtn.addActionListener(e -> dispose());
+
+        saveBtn.addActionListener(e -> {
+
+            String name = nameField.getText().trim();
+            String role = (String) roleBox.getSelectedItem();
+            String username = usernameField.getText().trim();
+            String tables = tablesField.getText().trim();
+
+            // ===== EMPTY FIELD CHECK =====
+            if (name.isEmpty() || username.isEmpty()) {
+                showStyledPopup("Error", "Please fill in all required fields.");
+                return;
             }
-        });
 
-        // DELETE
-        deleteBtn.addActionListener(e -> {
-            int row = table.getSelectedRow();
-            if (row != -1) {
-                model.removeRow(row);
+            // ===== TABLE RULE =====
+            if (!role.equals("Waiter") && !tables.isEmpty()) {
+                showStyledPopup("Error", "Only waiters can have assigned tables.");
+                return;
             }
+
+            // ===== AUTO CLEAR TABLES IF NOT WAITER =====
+            if (!role.equals("Waiter")) {
+                tables = "-";
+            }
+
+            // ===== SAVE DATA =====
+            if (isEdit) {
+                model.setValueAt(name, row, 0);
+                model.setValueAt(role, row, 1);
+                model.setValueAt(username, row, 2);
+                model.setValueAt(tables, row, 3);
+            } else {
+                model.addRow(new Object[]{name, role, username, tables});
+            }
+
+            dispose();
         });
 
-        content.add(topBar, BorderLayout.NORTH);
-        content.add(scroll, BorderLayout.CENTER);
-
-        // ===== ADD TO FRAME =====
         add(header, BorderLayout.NORTH);
         add(sidebar, BorderLayout.WEST);
         add(content, BorderLayout.CENTER);
 
         setVisible(true);
+    }
+
+    // ===== FIELD STYLE =====
+    private JPanel createField(String labelText, JComponent field) {
+        JPanel panel = new JPanel(new BorderLayout(10, 5));
+        panel.setOpaque(false);
+
+        JLabel label = new JLabel(labelText);
+        label.setFont(new Font("SansSerif", Font.BOLD, 16));
+
+        field.setPreferredSize(new Dimension(300, 40));
+
+        panel.add(label, BorderLayout.NORTH);
+        panel.add(field, BorderLayout.CENTER);
+        panel.add(Box.createVerticalStrut(15), BorderLayout.SOUTH);
+
+        return panel;
     }
 
     // ===== BUTTON STYLE =====
@@ -201,6 +214,7 @@ public class ManageEmployeesFrame extends JFrame {
         button.setBorderPainted(false);
         button.setContentAreaFilled(false);
         button.setOpaque(false);
+        button.setPreferredSize(new Dimension(180, 55));
 
         button.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
             public void paint(Graphics g, JComponent c) {
@@ -221,14 +235,23 @@ public class ManageEmployeesFrame extends JFrame {
         Color hover = new Color(170, 40, 40);
 
         btn.setMaximumSize(new Dimension(200, 50));
-        btn.setBackground(new Color(120, 20, 20));
+        btn.setBackground(normal);
         btn.setForeground(Color.WHITE);
         btn.setFocusPainted(false);
         btn.setBorderPainted(false);
         btn.setFont(new Font("SansSerif", Font.BOLD, 14));
         btn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        applyHoverEffect(btn, normal, hover);
+        // HOVER EFFECT
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btn.setBackground(hover);
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btn.setBackground(normal);
+            }
+        });
 
         return btn;
     }
@@ -243,19 +266,59 @@ public class ManageEmployeesFrame extends JFrame {
         }
     }
 
-    private void applyHoverEffect(JButton button, Color normal, Color hover) {
+    private void showStyledPopup(String titleText, String messageText) {
 
-        button.setBackground(normal);
+        JDialog dialog = new JDialog(this, true);
+        dialog.setSize(420, 220);
+        dialog.setLocationRelativeTo(this);
+        dialog.setUndecorated(true);
 
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setBackground(hover);
-            }
+        JPanel main = new JPanel(new BorderLayout());
+        main.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                button.setBackground(normal);
-            }
-        });
+        // ===== HEADER =====
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(new Color(145, 26, 26));
+        header.setPreferredSize(new Dimension(420, 50));
+
+        JLabel title = new JLabel(titleText);
+        title.setForeground(Color.WHITE);
+        title.setFont(new Font("SansSerif", Font.BOLD, 16));
+        title.setBorder(new EmptyBorder(0, 15, 0, 0));
+
+        // WARNING ICON
+        JLabel icon = new JLabel(loadIcon("Warning.png", 24, 24));
+        icon.setBorder(new EmptyBorder(0, 0, 0, 15));
+
+        header.add(title, BorderLayout.WEST);
+        header.add(icon, BorderLayout.EAST);
+
+        // ===== BODY =====
+        JPanel body = new JPanel();
+        body.setBackground(new Color(245, 240, 235));
+        body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
+
+        JLabel message = new JLabel(messageText);
+        message.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        message.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton okBtn = createRoundedButton("OK");
+        okBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        okBtn.setMaximumSize(new Dimension(180, 55));
+
+        okBtn.addActionListener(e -> dialog.dispose());
+
+        body.add(Box.createVerticalStrut(30));
+        body.add(message);
+        body.add(Box.createVerticalStrut(25));
+        body.add(okBtn);
+        body.add(Box.createVerticalStrut(20));
+
+        main.add(header, BorderLayout.NORTH);
+        main.add(body, BorderLayout.CENTER);
+
+        dialog.add(main);
+        dialog.setVisible(true);
     }
 
     private void showLogoutPopup() {

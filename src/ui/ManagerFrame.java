@@ -3,6 +3,7 @@ package ui;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import javax.swing.table.DefaultTableCellRenderer;
 
 public class ManagerFrame extends JFrame {
 
@@ -90,16 +91,25 @@ public class ManagerFrame extends JFrame {
         content.setBackground(new Color(220, 205, 185));
 
         // ===== DASHBOARD CARDS =====
-        JPanel dashboard = new JPanel(new GridLayout(2, 2, 30, 30));
+        JPanel dashboard = new JPanel(new FlowLayout(FlowLayout.LEFT, 25, 25));
         dashboard.setBackground(new Color(220, 205, 185));
-        dashboard.setBorder(new EmptyBorder(30, 30, 30, 30));
+        dashboard.setBorder(new EmptyBorder(30, 30, 0, 30));
 
         dashboard.add(createDashboardCard("Total Revenue", "$12,450"));
         dashboard.add(createDashboardCard("Orders Today", "42"));
         dashboard.add(createDashboardCard("Pending Requests", "5"));
         dashboard.add(createDashboardCard("Inventory Alerts", "2"));
 
-        content.add(dashboard, BorderLayout.CENTER);
+        // MAIN PANEL (STACKS DASHBOARD + TABLE)
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBackground(new Color(220, 205, 185));
+
+        mainPanel.add(dashboard);
+        mainPanel.add(Box.createVerticalStrut(20));
+        mainPanel.add(createRecentOrdersPanel());
+
+        content.add(mainPanel, BorderLayout.CENTER);
 
         //===== ADD TO FRAME =====
         add(header, BorderLayout.NORTH);
@@ -114,11 +124,13 @@ public class ManagerFrame extends JFrame {
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(new Color(245, 240, 235));
-        card.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
 
+        // SIZE
+        card.setPreferredSize(new Dimension(220, 130));
+        card.setMaximumSize(new Dimension(220, 130));
 
-        card.setPreferredSize(new Dimension(190, 110));
-        card.setMaximumSize(new Dimension(190, 110));
+        // RED BORDER
+        card.setBorder(BorderFactory.createLineBorder(new Color(145, 26, 26), 2));
 
         JLabel titleLabel = new JLabel(title);
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
@@ -141,6 +153,11 @@ public class ManagerFrame extends JFrame {
     // ===== SIDEBAR BUTTON STYLE =====
     private JButton createSidebarButton(String text) {
         JButton btn = new JButton(text);
+
+        Color normal = new Color(120, 20, 20);
+        Color hover = new Color(170, 40, 40);
+
+
         btn.setMaximumSize(new Dimension(200, 50));
         btn.setBackground(new Color(120, 20, 20));
         btn.setForeground(Color.WHITE);
@@ -148,6 +165,9 @@ public class ManagerFrame extends JFrame {
         btn.setBorderPainted(false);
         btn.setFont(new Font("SansSerif", Font.BOLD, 14));
         btn.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        applyHoverEffect(btn, normal, hover);
+
         return btn;
     }
 
@@ -260,5 +280,65 @@ public class ManagerFrame extends JFrame {
 
         dialog.add(main);
         dialog.setVisible(true);
+    }
+
+    private JPanel createRecentOrdersPanel() {
+
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(new Color(220, 205, 185));
+        panel.setBorder(new EmptyBorder(10, 30, 30, 30));
+
+        // TITLE
+        JLabel title = new JLabel("Recent Orders");
+        title.setFont(new Font("Serif", Font.BOLD, 22));
+        title.setBorder(new EmptyBorder(0, 0, 10, 0));
+
+        // TABLE DATA
+        String[] columns = {"Table", "Items", "Total", "Status"};
+
+        Object[][] data = {
+                {"B2", "2", "$14.00", "Served"},
+                {"A3", "4", "$38.50", "Preparing"},
+                {"C5", "5", "$27.00", "Preparing"}
+        };
+
+        JTable table = new JTable(data, columns);
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
+        table.setRowHeight(30);
+        table.setFont(new Font("SansSerif", Font.PLAIN, 16));
+
+        // HEADER STYLE
+        table.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 16));
+        table.getTableHeader().setBackground(new Color(145, 26, 26));
+        table.getTableHeader().setForeground(Color.WHITE);
+
+        JScrollPane scroll = new JScrollPane(table);
+        scroll.setPreferredSize(new Dimension(900, 150));
+
+        panel.add(title, BorderLayout.NORTH);
+        panel.add(scroll, BorderLayout.CENTER);
+
+        return panel;
+    }
+
+    private void applyHoverEffect(JButton button, Color normal, Color hover) {
+
+        button.setBackground(normal);
+
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(hover);
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(normal);
+            }
+        });
     }
 }
