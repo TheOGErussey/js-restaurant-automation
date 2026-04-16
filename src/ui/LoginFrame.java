@@ -181,10 +181,10 @@ public class LoginFrame extends JFrame {
 
             // Check credentials
             else if (user.equals("admin") && pass.equals("admin123")) {
-                JOptionPane.showMessageDialog(this, "Manager Login Success");
+                new ManagerFrame();
             }
             else if (user.equals("waiter") && pass.equals("123")) {
-                new ClockInFrame(); // OPEN NEW SCREEN
+                new ClockInFrame();
                 dispose();
             }
 

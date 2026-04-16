@@ -1,4 +1,29 @@
-package utils;
+package models;
 
 public class Employee {
+
+    private String name;
+    private String id;
+    private String role; // Waiter or Cook
+    private String assignedTables;
+    private boolean authorized;
+
+    public Employee(String name, String id, String role, String assignedTables, boolean authorized) {
+        this.name = name;
+        this.id = id;
+        this.role = role;
+        this.assignedTables = assignedTables;
+        this.authorized = authorized;
+    }
+
+    public String getName() { return name; }
+    public String getId() { return id; }
+    public String getRole() { return role; }
+    public String getAssignedTables() { return assignedTables; }
+    public boolean isAuthorized() { return authorized; }
+
+    public void setName(String name) { this.name = name; }
+    public void setRole(String role) { this.role = role; }
+    public void setAssignedTables(String tables) { this.assignedTables = tables; }
+    public void setAuthorized(boolean authorized) { this.authorized = authorized; }
 }
