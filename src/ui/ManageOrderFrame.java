@@ -451,6 +451,7 @@ public class ManageOrderFrame extends JFrame {
         dialog.setVisible(true);
     }
 
+    // CURRENT WORK IN PROGRESS
     private void showRefundReasonError() {
 
         JDialog dialog = new JDialog(this, true);
