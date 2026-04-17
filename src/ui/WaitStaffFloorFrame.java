@@ -5,6 +5,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+import models.TableInfo;
+import models.TableManager;
 
 public class WaitStaffFloorFrame extends JFrame {
 
@@ -19,6 +21,7 @@ public class WaitStaffFloorFrame extends JFrame {
 
     private final Map<JButton, String> tableStatuses = new HashMap<>();
     private final Map<JButton, String> tableNames = new HashMap<>();
+    private final Map<JButton, TableInfo> tableMap = new HashMap<>();
 
     public WaitStaffFloorFrame() {
         setTitle("Wait Staff - J's Corner Restaurant");
@@ -204,19 +207,14 @@ public class WaitStaffFloorFrame extends JFrame {
                 return;
             }
 
-            String currentStatus = tableStatuses.get(selectedTableButton);
+            TableInfo table = tableMap.get(selectedTableButton);
 
-            if ("Dirty".equals(currentStatus)) {
-                showErrorPopup("Cannot manage order for a dirty table.");
+            if (table == null) {
+                showErrorPopup("Error: Table mapping failed.");
                 return;
             }
 
-            // GET TABLE NAME + STATUS
-            String tableName = selectedTableLabel.getText().replace("Table Selected: ", "");
-            String status = currentStatus;
-
-            // PASS INTO NEXT SCREEN
-            new ManageOrderFrame(tableName, status);
+            new ManageOrderFrame(table);
             dispose();
         });
 
@@ -263,9 +261,7 @@ public class WaitStaffFloorFrame extends JFrame {
     private void addTable(JPanel panel, String name, String status, int x, int y, GridBagConstraints gbc) {
         JButton btn = new JButton(name);
         Dimension size = new Dimension(85, 75);
-
         btn.setFont(new Font("SansSerif", Font.BOLD, 18));
-
         btn.setPreferredSize(size);
         btn.setMinimumSize(size);
         btn.setMaximumSize(size);
@@ -273,14 +269,26 @@ public class WaitStaffFloorFrame extends JFrame {
         btn.setFocusPainted(false);
         btn.setBorderPainted(false);
 
+        // CREATE REAL TABLE OBJECT
+        TableInfo table = new TableInfo(name);
+        table.setStatus(status);
+
+        // STORE IT
+        TableManager.tables.add(table);
+        tableMap.put(btn, table);
+
+        // KEEP YOUR EXISTING UI MAPS
         tableStatuses.put(btn, status);
         tableNames.put(btn, name);
 
         btn.addActionListener(e -> {
             selectedTableButton = btn;
 
+            // GET THE TABLE OBJECT
+            TableInfo selectedTable = tableMap.get(btn);
+
             selectedTableLabel.setText("Table Selected: " + name);
-            statusLabel.setText("Status: " + tableStatuses.get(btn));
+            statusLabel.setText("Status: " + selectedTable.getStatus());
         });
 
         gbc.gridx = x;

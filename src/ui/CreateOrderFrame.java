@@ -1,5 +1,9 @@
 package ui;
 
+import models.Order;
+import models.OrderItem;
+import models.TableInfo;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
@@ -9,14 +13,12 @@ public class CreateOrderFrame extends JFrame {
 
     private JPanel itemPanel;
     private DefaultTableModel tableModel;
-    private String tableName;
-    private String status;
     private static int orderCounter = 1;
+    private TableInfo table;
 
-    public CreateOrderFrame(String tableName, String status) {
+    public CreateOrderFrame(TableInfo table) {
 
-        this.tableName = tableName;
-        this.status = status;
+        this.table = table;
 
         setTitle("Create Order - J's Corner Restaurant");
         setSize(1280, 720);
@@ -69,7 +71,7 @@ public class CreateOrderFrame extends JFrame {
         leftPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
         leftPanel.setPreferredSize(new Dimension(420, 600));
 
-        JLabel tableLabel = new JLabel("Table: " + tableName);
+        JLabel tableLabel = new JLabel("Table: " + table.getTableName());
         tableLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
 
         tableModel = new DefaultTableModel(
@@ -108,7 +110,7 @@ public class CreateOrderFrame extends JFrame {
         buttonRow.add(sendBtn);    // RIGHT
 
         cancelBtn.addActionListener(e -> {
-            new ManageOrderFrame(tableName, status);
+            new ManageOrderFrame(table);
             dispose();
         });
 
@@ -119,9 +121,23 @@ public class CreateOrderFrame extends JFrame {
                 return;
             }
 
+            // ===== SAVE ORDER TO TABLE =====
+            Order order = new Order();
+
+            for (int i = 0; i < tableModel.getRowCount(); i++) {
+                int qty = (int) tableModel.getValueAt(i, 0);
+                String item = (String) tableModel.getValueAt(i, 1);
+                String price = (String) tableModel.getValueAt(i, 2);
+
+                order.addItem(new OrderItem(item, qty, Double.parseDouble(price)));
+            }
+
+            // save to table
+            table.setCurrentOrder(order);
+
             // ===== PRINT TO CONSOLE =====
             System.out.println("=== ORDER #" + orderCounter + " ===");
-            System.out.println("Table: " + tableName);
+            System.out.println("Table: " + table.getTableName());
 
             for (int i = 0; i < tableModel.getRowCount(); i++) {
                 int qty = (int) tableModel.getValueAt(i, 0);

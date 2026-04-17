@@ -4,18 +4,24 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
+import models.OrderItem;
+import models.TableInfo;
+import models.Order;
+import models.RefundRequest;
+import models.RequestManager;
+
 public class ManageOrderFrame extends JFrame {
 
     private JLabel selectedTableLabel;
     private JLabel statusLabel;
     private JButton selectedButton = null;
+    private TableInfo table;
 
     private final Color OPEN = new Color(110, 200, 80);
     private final Color OCCUPIED = new Color(240, 200, 80);
     private final Color DIRTY = new Color(230, 50, 50);
 
-    public ManageOrderFrame(String tableName, String status) {
-
+    public ManageOrderFrame(TableInfo table) {
         setTitle("Manage Order - J's Corner Restaurant");
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -147,18 +153,24 @@ public class ManageOrderFrame extends JFrame {
         sidePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 6));
         sidePanel.setPreferredSize(new Dimension(360, 520));
 
-        selectedTableLabel = new JLabel("Table Selected: " + tableName);
+        selectedTableLabel = new JLabel("Table Selected: " + table.getTableName());
         selectedTableLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
         selectedTableLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        statusLabel = new JLabel("Status: " + status);
+        statusLabel = new JLabel("Status: " + table.getStatus());
         statusLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
         statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // ===== LOAD ORDER =====
+        if (table.getCurrentOrder() != null) {
+
+            Order order = table.getCurrentOrder();
+        }
 
         // BUTTONS
         JButton createOrderBtn = createRoundedButton("Create Order");
         createOrderBtn.addActionListener(e -> {
-            new CreateOrderFrame(tableName, status);
+            new CreateOrderFrame(table);
             dispose();
         });
 
@@ -166,15 +178,41 @@ public class ManageOrderFrame extends JFrame {
         JButton orderStatusBtn = createRoundedButton("Order Status");
         JButton checkoutBtn = createRoundedButton("Checkout");
         JButton cancelBtn = createRoundedButton("Cancel");
+        JButton refundBtn = createRoundedButton("Request Refund");
+
+        refundBtn.addActionListener(e -> {
+
+            if (table.getCurrentOrder() == null) {
+                showNoOrderRefundError();
+                return;
+            }
+
+            String reason = JOptionPane.showInputDialog("Enter refund reason:");
+
+            if (reason == null || reason.trim().isEmpty()) {
+                showRefundReasonError();
+                return;
+            }
+
+            RefundRequest request = new RefundRequest(
+                    table.getTableName(),
+                    reason
+            );
+
+            RequestManager.requests.add(request);
+
+            showRefundSuccessPopup();
+        });
+
         cancelBtn.addActionListener(e -> {
-            new WaitStaffFloorFrame(tableName, status); // go back with same data
+            new WaitStaffFloorFrame();
             dispose();
         });
 
-        Dimension btnSize = new Dimension(180, 60);
+        Dimension btnSize = new Dimension(160, 50);
 
         JButton[] buttons = {
-                createOrderBtn, updateOrderBtn, orderStatusBtn, checkoutBtn, cancelBtn
+                createOrderBtn, updateOrderBtn, orderStatusBtn, checkoutBtn, refundBtn, cancelBtn
         };
 
         for (JButton b : buttons) {
@@ -204,6 +242,9 @@ public class ManageOrderFrame extends JFrame {
         sidePanel.add(Box.createVerticalStrut(15));
 
         sidePanel.add(cancelBtn);
+        sidePanel.add(Box.createVerticalStrut(15));
+
+        sidePanel.add(refundBtn);
 
         sidePanel.add(Box.createVerticalGlue());
 
@@ -351,6 +392,170 @@ public class ManageOrderFrame extends JFrame {
         main.add(body, BorderLayout.CENTER);
 
         dialog.add(main);
+        dialog.setVisible(true);
+    }
+
+    private void showNoOrderRefundError() {
+
+        JDialog dialog = new JDialog(this, true);
+        dialog.setSize(400, 200);
+        dialog.setLocationRelativeTo(this);
+        dialog.setUndecorated(true);
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+
+        // ===== HEADER =====
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(new Color(145, 26, 26));
+        header.setPreferredSize(new Dimension(400, 50));
+
+        JLabel title = new JLabel("Error");
+        title.setForeground(Color.WHITE);
+        title.setFont(new Font("SansSerif", Font.BOLD, 16));
+        title.setBorder(new EmptyBorder(0, 15, 0, 0));
+
+        JLabel icon = new JLabel(loadIcon("Warning.png", 24, 24));
+        icon.setBorder(new EmptyBorder(0, 0, 0, 15));
+
+        header.add(title, BorderLayout.WEST);
+        header.add(icon, BorderLayout.EAST);
+
+        // ===== BODY =====
+        JPanel body = new JPanel();
+        body.setBackground(new Color(245, 240, 235));
+        body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
+
+        JLabel message = new JLabel("No order to refund.");
+        message.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        message.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton okBtn = createRoundedButton("OK");
+
+        Dimension size = new Dimension(140, 45);
+        okBtn.setPreferredSize(size);
+        okBtn.setMaximumSize(size);
+        okBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        okBtn.addActionListener(e -> dialog.dispose());
+
+        body.add(Box.createVerticalStrut(25));
+        body.add(message);
+        body.add(Box.createVerticalStrut(25));
+        body.add(okBtn);
+
+        mainPanel.add(header, BorderLayout.NORTH);
+        mainPanel.add(body, BorderLayout.CENTER);
+
+        dialog.add(mainPanel);
+        dialog.setVisible(true);
+    }
+
+    private void showRefundReasonError() {
+
+        JDialog dialog = new JDialog(this, true);
+        dialog.setSize(400, 200);
+        dialog.setLocationRelativeTo(this);
+        dialog.setUndecorated(true);
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(new Color(145, 26, 26));
+        header.setPreferredSize(new Dimension(400, 50));
+
+        JLabel title = new JLabel("Error");
+        title.setForeground(Color.WHITE);
+        title.setFont(new Font("SansSerif", Font.BOLD, 16));
+        title.setBorder(new EmptyBorder(0, 15, 0, 0));
+
+        JLabel icon = new JLabel(loadIcon("Warning.png", 24, 24));
+        icon.setBorder(new EmptyBorder(0, 0, 0, 15));
+
+        header.add(title, BorderLayout.WEST);
+        header.add(icon, BorderLayout.EAST);
+
+        JPanel body = new JPanel();
+        body.setBackground(new Color(245, 240, 235));
+        body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
+
+        JLabel message = new JLabel("Refund reason is required.");
+        message.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        message.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton okBtn = createRoundedButton("OK");
+
+        Dimension size = new Dimension(140, 45);
+        okBtn.setPreferredSize(size);
+        okBtn.setMaximumSize(size);
+        okBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        okBtn.addActionListener(e -> dialog.dispose());
+
+        body.add(Box.createVerticalStrut(25));
+        body.add(message);
+        body.add(Box.createVerticalStrut(25));
+        body.add(okBtn);
+
+        mainPanel.add(header, BorderLayout.NORTH);
+        mainPanel.add(body, BorderLayout.CENTER);
+
+        dialog.add(mainPanel);
+        dialog.setVisible(true);
+    }
+
+    private void showRefundSuccessPopup() {
+
+        JDialog dialog = new JDialog(this, true);
+        dialog.setSize(400, 200);
+        dialog.setLocationRelativeTo(this);
+        dialog.setUndecorated(true);
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(new Color(145, 26, 26));
+        header.setPreferredSize(new Dimension(400, 50));
+
+        JLabel title = new JLabel("Success");
+        title.setForeground(Color.WHITE);
+        title.setFont(new Font("SansSerif", Font.BOLD, 16));
+        title.setBorder(new EmptyBorder(0, 15, 0, 0));
+
+        JLabel icon = new JLabel(loadIcon("Check.png", 24, 24));
+        icon.setBorder(new EmptyBorder(0, 0, 0, 15));
+
+        header.add(title, BorderLayout.WEST);
+        header.add(icon, BorderLayout.EAST);
+
+        JPanel body = new JPanel();
+        body.setBackground(new Color(245, 240, 235));
+        body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
+
+        JLabel message = new JLabel("Refund request sent.");
+        message.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        message.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton okBtn = createRoundedButton("OK");
+
+        Dimension size = new Dimension(140, 45);
+        okBtn.setPreferredSize(size);
+        okBtn.setMaximumSize(size);
+        okBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        okBtn.addActionListener(e -> dialog.dispose());
+
+        body.add(Box.createVerticalStrut(25));
+        body.add(message);
+        body.add(Box.createVerticalStrut(25));
+        body.add(okBtn);
+
+        mainPanel.add(header, BorderLayout.NORTH);
+        mainPanel.add(body, BorderLayout.CENTER);
+
+        dialog.add(mainPanel);
         dialog.setVisible(true);
     }
 }
