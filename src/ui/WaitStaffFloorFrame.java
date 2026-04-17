@@ -250,13 +250,6 @@ public class WaitStaffFloorFrame extends JFrame {
         setVisible(true);
     }
 
-    public WaitStaffFloorFrame(String tableName, String status) {
-        this();
-
-        selectedTableLabel.setText("Table Selected: " + tableName);
-        statusLabel.setText("Status: " + status);
-    }
-
     // ===== TABLE METHOD =====
     private void addTable(JPanel panel, String name, String status, int x, int y, GridBagConstraints gbc) {
         JButton btn = new JButton(name);
@@ -277,7 +270,7 @@ public class WaitStaffFloorFrame extends JFrame {
         TableManager.tables.add(table);
         tableMap.put(btn, table);
 
-        // KEEP YOUR EXISTING UI MAPS
+        // KEEP EXISTING UI MAPS
         tableStatuses.put(btn, status);
         tableNames.put(btn, name);
 
