@@ -69,6 +69,7 @@ public class ManagerFrame extends JFrame {
                 "DASHBOARD",
                 "REFUND REQUESTS",
                 "MANAGE EMPLOYEES",
+                "REARRANGE TABLES",
                 "MANAGE MENU",
                 "MANAGE INVENTORY",
                 "GENERATE REPORTS"
@@ -84,6 +85,13 @@ public class ManagerFrame extends JFrame {
             if (item.equals("REFUND REQUESTS")) {
                 btn.addActionListener(e -> {
                     new RefundRequestsFrame();
+                    dispose();
+                });
+            }
+
+            if (item.equals("REARRANGE TABLES")) {
+                btn.addActionListener(e -> {
+                    new ManagerFloorFrame(); // new screen
                     dispose();
                 });
             }

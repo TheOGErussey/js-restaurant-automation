@@ -1,5 +1,6 @@
 package ui;
 
+import models.Employee;
 import models.Order;
 import models.OrderItem;
 import models.TableInfo;
@@ -15,10 +16,12 @@ public class CreateOrderFrame extends JFrame {
     private DefaultTableModel tableModel;
     private static int orderCounter = 1;
     private TableInfo table;
+    private Employee currentEmployee;
 
-    public CreateOrderFrame(TableInfo table) {
+    public CreateOrderFrame(TableInfo table, Employee emp) {
 
         this.table = table;
+        this.currentEmployee = emp;
 
         setTitle("Create Order - J's Corner Restaurant");
         setSize(1280, 720);
@@ -110,7 +113,7 @@ public class CreateOrderFrame extends JFrame {
         buttonRow.add(sendBtn);    // RIGHT
 
         cancelBtn.addActionListener(e -> {
-            new ManageOrderFrame(table);
+            new ManageOrderFrame(table, currentEmployee);
             dispose();
         });
 

@@ -4,11 +4,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
-import models.OrderItem;
-import models.TableInfo;
-import models.Order;
-import models.RefundRequest;
-import models.RequestManager;
+import models.*;
 
 public class ManageOrderFrame extends JFrame {
 
@@ -16,12 +12,14 @@ public class ManageOrderFrame extends JFrame {
     private JLabel statusLabel;
     private JButton selectedButton = null;
     private TableInfo table;
+    private Employee currentEmployee;
 
     private final Color OPEN = new Color(110, 200, 80);
     private final Color OCCUPIED = new Color(240, 200, 80);
     private final Color DIRTY = new Color(230, 50, 50);
 
-    public ManageOrderFrame(TableInfo table) {
+    public ManageOrderFrame(TableInfo table, Employee emp) {
+        this.currentEmployee = emp;
         setTitle("Manage Order - J's Corner Restaurant");
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -170,7 +168,7 @@ public class ManageOrderFrame extends JFrame {
         // BUTTONS
         JButton createOrderBtn = createRoundedButton("Create Order");
         createOrderBtn.addActionListener(e -> {
-            new CreateOrderFrame(table);
+            new CreateOrderFrame(table, currentEmployee);
             dispose();
         });
 
@@ -201,7 +199,7 @@ public class ManageOrderFrame extends JFrame {
         });
 
         cancelBtn.addActionListener(e -> {
-            new WaitStaffFloorFrame();
+            new WaitStaffFloorFrame(currentEmployee);
             dispose();
         });
 
