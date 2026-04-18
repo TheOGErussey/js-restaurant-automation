@@ -77,9 +77,15 @@ public class ManagerFrame extends JFrame {
         for (String item : menuItems) {
             JButton btn = createSidebarButton(item);
 
-            // ONLY THIS BUTTON WORKS RIGHT NOW
             if (item.equals("MANAGE EMPLOYEES")) {
                 btn.addActionListener(e -> new ManageEmployeesFrame());
+            }
+
+            if (item.equals("REFUND REQUESTS")) {
+                btn.addActionListener(e -> {
+                    new RefundRequestsFrame();
+                    dispose();
+                });
             }
 
             sidebar.add(Box.createVerticalStrut(20));

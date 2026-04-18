@@ -58,7 +58,7 @@ public class TableInfo {
     // Clear order when sent to kitchen
     public void clearOrder() {
         this.currentOrder = null;
-        this.status = "Dirty"; // ready for busboy next
+        this.status = "Dirty";
     }
 
     // Check if table has active order

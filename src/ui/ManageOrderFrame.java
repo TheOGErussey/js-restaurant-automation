@@ -187,18 +187,14 @@ public class ManageOrderFrame extends JFrame {
                 return;
             }
 
-            String reason = JOptionPane.showInputDialog("Enter refund reason:");
+            String reason = showRefundReasonPopup();
 
-            if (reason == null || reason.trim().isEmpty()) {
+            if (reason == null || reason.isEmpty()) {
                 showRefundReasonError();
                 return;
             }
 
-            RefundRequest request = new RefundRequest(
-                    table.getTableName(),
-                    reason
-            );
-
+            RefundRequest request = new RefundRequest(table, reason);
             RequestManager.requests.add(request);
 
             showRefundSuccessPopup();
@@ -558,5 +554,92 @@ public class ManageOrderFrame extends JFrame {
 
         dialog.add(mainPanel);
         dialog.setVisible(true);
+    }
+
+    private String showRefundReasonPopup() {
+
+        final String[] result = {null};
+
+        JDialog dialog = new JDialog(this, true);
+        dialog.setSize(420, 260);
+        dialog.setLocationRelativeTo(this);
+        dialog.setUndecorated(true);
+
+        JPanel main = new JPanel(new BorderLayout());
+        main.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+
+        // ===== HEADER =====
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(new Color(145, 26, 26));
+        header.setPreferredSize(new Dimension(420, 55));
+
+        JLabel title = new JLabel("Refund Request");
+        title.setForeground(Color.WHITE);
+        title.setFont(new Font("SansSerif", Font.BOLD, 16));
+        title.setBorder(new EmptyBorder(0, 15, 0, 0));
+
+        JLabel icon = new JLabel(loadIcon("Warning.png", 24, 24));
+        icon.setBorder(new EmptyBorder(0, 0, 0, 15));
+
+        header.add(title, BorderLayout.WEST);
+        header.add(icon, BorderLayout.EAST);
+
+        // ===== BODY =====
+        JPanel body = new JPanel();
+        body.setBackground(new Color(245, 240, 235));
+        body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
+
+        JLabel message = new JLabel("Enter refund reason:");
+        message.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        message.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JTextArea input = new JTextArea(3, 20);
+        input.setLineWrap(true);
+        input.setWrapStyleWord(true);
+
+        JScrollPane inputScroll = new JScrollPane(input);
+        inputScroll.setMaximumSize(new Dimension(320, 80));
+        inputScroll.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // ===== BUTTONS =====
+        JPanel btnRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
+        btnRow.setOpaque(false);
+
+        JButton cancelBtn = createRoundedButton("Cancel");
+        JButton submitBtn = createRoundedButton("Submit");
+
+        Dimension size = new Dimension(120, 45);
+
+        cancelBtn.setPreferredSize(size);
+        cancelBtn.setMaximumSize(size);
+
+        submitBtn.setPreferredSize(size);
+        submitBtn.setMaximumSize(size);
+
+        cancelBtn.addActionListener(e -> dialog.dispose());
+
+        submitBtn.addActionListener(e -> {
+            result[0] = input.getText().trim();
+            dialog.dispose();
+        });
+
+        btnRow.add(cancelBtn);
+        btnRow.add(submitBtn);
+
+        // ===== BUILD =====
+        body.add(Box.createVerticalStrut(15));
+        body.add(message);
+        body.add(Box.createVerticalStrut(10));
+        body.add(inputScroll);
+        body.add(Box.createVerticalStrut(15));
+        body.add(btnRow);
+
+        main.add(header, BorderLayout.NORTH);
+        main.add(body, BorderLayout.CENTER);
+
+        dialog.add(main);
+        dialog.setVisible(true);
+
+        return result[0]; // null if cancelled
     }
 }

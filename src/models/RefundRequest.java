@@ -2,18 +2,22 @@ package models;
 
 public class RefundRequest {
 
-    private String tableName;
+    private TableInfo table;
     private String reason;
-    private String status; // Pending, Approved, Denied
+    private String status;
 
-    public RefundRequest(String tableName, String reason) {
-        this.tableName = tableName;
+    public RefundRequest(TableInfo table, String reason) {
+        this.table = table;
         this.reason = reason;
         this.status = "Pending";
     }
 
+    public TableInfo getTable() {
+        return table;
+    }
+
     public String getTableName() {
-        return tableName;
+        return table.getTableName();
     }
 
     public String getReason() {
@@ -26,9 +30,14 @@ public class RefundRequest {
 
     public void approve() {
         status = "Approved";
+
+        // AUTO CLEAR ORDER
+        table.clearOrder();
     }
 
     public void deny() {
         status = "Denied";
+
+        table.clearOrder();
     }
 }
