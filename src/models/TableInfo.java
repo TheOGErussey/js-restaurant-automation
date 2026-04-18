@@ -5,6 +5,7 @@ public class TableInfo {
     private String tableName;
     private String status; // Open, Occupied, Dirty
     private String assignedWaiter;
+    private int seats;
 
     // LINK TO ORDER
     private Order currentOrder;
@@ -15,6 +16,7 @@ public class TableInfo {
         this.status = "Open";
         this.assignedWaiter = "";
         this.currentOrder = null;
+        this.seats = 4;
     }
 
     // ===== GETTERS =====
@@ -32,6 +34,10 @@ public class TableInfo {
 
     public Order getCurrentOrder() {
         return currentOrder;
+    }
+
+    public int getSeats() {
+        return seats;
     }
 
     // ===== SETTERS =====
@@ -64,5 +70,17 @@ public class TableInfo {
     // Check if table has active order
     public boolean hasActiveOrder() {
         return currentOrder != null;
+    }
+
+    public void addSeats(int amount) {
+        seats += amount;
+    }
+
+    public void joinWith(TableInfo otherTable) {
+        this.seats += otherTable.seats;
+        this.tableName = this.tableName + "+" + otherTable.tableName;
+
+        otherTable.seats = 0;
+        otherTable.status = "Joined";
     }
 }

@@ -7,13 +7,15 @@ public class Employee {
     private String role; // Waiter or Cook
     private String assignedTables;
     private boolean authorized;
+    private String password;
 
-    public Employee(String name, String id, String role, String assignedTables, boolean authorized) {
+    public Employee(String name, String id, String role, String assignedTables, boolean authorized, String password) {
         this.name = name;
         this.id = id;
         this.role = role;
         this.assignedTables = assignedTables;
         this.authorized = authorized;
+        this.password = password;
     }
 
     public String getName() { return name; }
@@ -21,6 +23,7 @@ public class Employee {
     public String getRole() { return role; }
     public String getAssignedTables() { return assignedTables; }
     public boolean isAuthorized() { return authorized; }
+    public String getPassword() {return password; }
 
     public void setName(String name) { this.name = name; }
     public void setRole(String role) { this.role = role; }

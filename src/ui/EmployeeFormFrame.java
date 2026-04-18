@@ -1,5 +1,8 @@
 package ui;
 
+import models.Employee;
+import models.EmployeeFileHandler;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
@@ -7,8 +10,11 @@ import java.awt.*;
 
 public class EmployeeFormFrame extends JFrame {
 
-    public EmployeeFormFrame(DefaultTableModel model, int row) {
+    private java.util.ArrayList<Employee> employees;
 
+    public EmployeeFormFrame(DefaultTableModel model, int row, java.util.ArrayList<Employee> employees) {
+
+        this.employees = employees;
         boolean isEdit = row >= 0;
 
         setTitle(isEdit ? "Edit Employee" : "Add Employee");
@@ -169,14 +175,39 @@ public class EmployeeFormFrame extends JFrame {
 
             // ===== SAVE DATA =====
             if (isEdit) {
-                model.setValueAt(name, row, 0);
-                model.setValueAt(role, row, 1);
-                model.setValueAt(username, row, 2);
-                model.setValueAt(tables, row, 3);
+                Employee oldEmp = employees.get(row);
+
+                // PRESERVE PASSWORD
+                String password = oldEmp.getPassword();
+                boolean authorized = oldEmp.isAuthorized();
+
+                // CREATE NEW EMPLOYEE
+                Employee updated = new Employee(
+                        name,
+                        username,
+                        role,
+                        tables,
+                        authorized,
+                        password
+                );
+
+                employees.set(row, updated);
+
             } else {
-                model.addRow(new Object[]{name, role, username, tables});
+
+                Employee newEmp = new Employee(
+                        name,
+                        username,
+                        role,
+                        tables,
+                        false,
+                        "123"
+                );
+
+                employees.add(newEmp);
             }
 
+            EmployeeFileHandler.saveEmployees(employees);
             dispose();
         });
 

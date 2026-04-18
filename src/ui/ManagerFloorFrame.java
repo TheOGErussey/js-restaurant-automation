@@ -3,18 +3,18 @@ package ui;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.util.*;
-
-import models.Employee;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import models.TableInfo;
 import models.TableManager;
 import models.TableRegistry;
 
-public class WaitStaffFloorFrame extends JFrame {
+public class ManagerFloorFrame extends JFrame {
 
     private JLabel selectedTableLabel;
     private JLabel statusLabel;
-    private Employee currentEmployee;
+    private JLabel selectedTablesLabel;
 
     private JButton selectedTableButton = null;
 
@@ -26,10 +26,10 @@ public class WaitStaffFloorFrame extends JFrame {
     private final Map<JButton, String> tableNames = new HashMap<>();
     private final Map<JButton, TableInfo> tableMap = new HashMap<>();
 
-    public WaitStaffFloorFrame(Employee emp) {
+    private ArrayList<TableInfo> selectedTables = new ArrayList<>();
 
-        this.currentEmployee = emp;
-        setTitle("Wait Staff - J's Corner Restaurant");
+    public ManagerFloorFrame() {
+        setTitle("Manager - J's Corner Restaurant");
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -45,7 +45,7 @@ public class WaitStaffFloorFrame extends JFrame {
         leftHeader.setOpaque(false);
 
         JLabel logo = new JLabel(loadIcon("Fork.png", 45, 45));
-        JLabel title = new JLabel("Waiter Dashboard");
+        JLabel title = new JLabel("Rearrange Tables");
         title.setFont(new Font("Serif", Font.BOLD, 28));
         title.setForeground(new Color(245, 230, 211));
 
@@ -55,7 +55,7 @@ public class WaitStaffFloorFrame extends JFrame {
         JPanel rightHeader = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 25));
         rightHeader.setOpaque(false);
 
-        JLabel welcome = new JLabel("Welcome, Wait Staff");
+        JLabel welcome = new JLabel("Welcome, Manager");
         welcome.setForeground(Color.WHITE);
 
         JLabel logout = new JLabel("Logout");
@@ -161,89 +161,91 @@ public class WaitStaffFloorFrame extends JFrame {
         sidePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 6));
         sidePanel.setPreferredSize(new Dimension(320, 420));
 
-        selectedTableLabel = new JLabel("Table Selected: None");
-        selectedTableLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        selectedTableLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
+
+        selectedTablesLabel = new JLabel("Selected Table/s: None");
+        selectedTablesLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        selectedTablesLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
 
         statusLabel = new JLabel("Status: ");
         statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         statusLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
 
-        JButton updateBtn = createRoundedButton("Update Status");
-        JButton orderBtn = createRoundedButton("Manage Order");
+        JButton addSeatsBtn = createRoundedButton("Add Seats");
+        JButton joinTablesBtn = createRoundedButton("Join Tables");
         JButton cancelBtn = createRoundedButton("Cancel");
 
-        updateBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        orderBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        addSeatsBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        joinTablesBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
         cancelBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         Dimension btnSize = new Dimension(160, 60);
 
-        updateBtn.setPreferredSize(btnSize);
-        updateBtn.setMinimumSize(btnSize);
-        updateBtn.setMaximumSize(btnSize);
+        addSeatsBtn.setPreferredSize(btnSize);
+        addSeatsBtn.setMinimumSize(btnSize);
+        addSeatsBtn.setMaximumSize(btnSize);
 
-        orderBtn.setPreferredSize(btnSize);
-        orderBtn.setMinimumSize(btnSize);
-        orderBtn.setMaximumSize(btnSize);
+        joinTablesBtn.setPreferredSize(btnSize);
+        joinTablesBtn.setMinimumSize(btnSize);
+        joinTablesBtn.setMaximumSize(btnSize);
 
         cancelBtn.setPreferredSize(btnSize);
         cancelBtn.setMinimumSize(btnSize);
         cancelBtn.setMaximumSize(btnSize);
 
         sidePanel.add(Box.createVerticalStrut(20));
-        sidePanel.add(selectedTableLabel);
+        sidePanel.add(selectedTablesLabel);
         sidePanel.add(Box.createVerticalStrut(10));
         sidePanel.add(statusLabel);
         sidePanel.add(Box.createVerticalStrut(40));
-        sidePanel.add(updateBtn);
+        sidePanel.add(addSeatsBtn);
         sidePanel.add(Box.createVerticalStrut(20));
-        sidePanel.add(orderBtn);
+        sidePanel.add(joinTablesBtn);
         sidePanel.add(Box.createVerticalStrut(20));
         sidePanel.add(cancelBtn);
 
         sideWrapper.add(sidePanel);
 
         // ===== ACTIONS =====
-        orderBtn.addActionListener(e -> {
+        addSeatsBtn.addActionListener(e -> {
 
-            if (selectedTableButton == null) {
-                showErrorPopup("Please select a table first.");
+            if (selectedTables.size() != 1) {
+                showErrorPopup("Select one table.");
                 return;
             }
 
-            TableInfo table = tableMap.get(selectedTableButton);
-
-            if (table == null) {
-                showErrorPopup("Error: Table mapping failed.");
-                return;
-            }
-
-            new ManageOrderFrame(table, currentEmployee);
-            dispose();
+            showAddSeatsPopup();
         });
 
         cancelBtn.addActionListener(e -> {
-            selectedTableButton = null;
-            selectedTableLabel.setText("Table Selected: None");
-            statusLabel.setText("Status: ");
+
+            selectedTables.clear();
+
+            // remove highlights from all buttons
+            for (JButton b : tableMap.keySet()) {
+                b.setBorder(null);
+            }
+
+            updateSelectedTablesLabel();
         });
 
-        updateBtn.addActionListener(e -> {
-            if (selectedTableButton == null) {
-                showErrorPopup("Please select a table first.");
+        joinTablesBtn.addActionListener(e -> {
+
+            if (selectedTables.size() < 2) {
+                showErrorPopup("Select at least two tables.");
                 return;
             }
 
-            String currentStatus = tableStatuses.get(selectedTableButton);
+            TableInfo primaryTable = selectedTables.get(0);
 
-            if ("Occupied".equals(currentStatus)) {
-                tableStatuses.put(selectedTableButton, "Dirty");
-                selectedTableButton.setBackground(DIRTY);
-                statusLabel.setText("Status: Dirty");
-            } else {
-                showErrorPopup("Only occupied tables can be marked dirty.");
+            for (int i = 1; i < selectedTables.size(); i++) {
+                primaryTable.joinWith(selectedTables.get(i));
             }
+
+            showJoinTablesSuccessPopup();
+            selectedTables.clear();
+            updateSelectedTablesLabel();
+            refreshTableButtons();
+
         });
 
         // ===== BUILD =====
@@ -257,46 +259,46 @@ public class WaitStaffFloorFrame extends JFrame {
 
     // ===== TABLE METHOD =====
     private void addTable(JPanel panel, String name, String status, int x, int y, GridBagConstraints gbc) {
-        JButton btn = new JButton(name);
 
+        JButton btn = new JButton(name);
         Dimension size = new Dimension(85, 75);
+
         btn.setFont(new Font("SansSerif", Font.BOLD, 18));
         btn.setPreferredSize(size);
         btn.setMinimumSize(size);
         btn.setMaximumSize(size);
         btn.setBackground(getColorForStatus(status));
         btn.setFocusPainted(false);
-        btn.setBorderPainted(true);
+        btn.setBorderPainted(false);
 
-        Set<String> assigned = getAssignedTables();
-
-        if (assigned.contains(name.trim())) {
-            btn.setBorder(BorderFactory.createLineBorder(Color.BLUE, 4));
-        }
-
-        // CREATE REAL TABLE OBJECT
+        // ===== CREATE TABLE OBJECT =====
         TableInfo table = new TableInfo(name);
         table.setStatus(status);
-        TableRegistry.tables.add(table);
 
-        // STORE IT
+        TableRegistry.tables.add(table);
         TableManager.tables.add(table);
         tableMap.put(btn, table);
 
-        // KEEP EXISTING UI MAPS
+        // ===== KEEP EXISTING MAPS =====
         tableStatuses.put(btn, status);
         tableNames.put(btn, name);
 
         btn.addActionListener(e -> {
-            selectedTableButton = btn;
 
-            // GET THE TABLE OBJECT
             TableInfo selectedTable = tableMap.get(btn);
 
-            selectedTableLabel.setText("Table Selected: " + name);
-            statusLabel.setText("Status: " + selectedTable.getStatus());
+            if (selectedTables.contains(selectedTable)) {
+                selectedTables.remove(selectedTable);
+                btn.setBorder(null);
+            } else {
+                selectedTables.add(selectedTable);
+                btn.setBorder(BorderFactory.createLineBorder(Color.YELLOW, 3));
+            }
+
+            updateSelectedTablesLabel();
         });
 
+        // ===== ADD TO PANEL =====
         gbc.gridx = x;
         gbc.gridy = y;
         panel.add(btn, gbc);
@@ -474,24 +476,237 @@ public class WaitStaffFloorFrame extends JFrame {
         dialog.setVisible(true);
     }
 
+    private void showAddSeatsSuccessPopup() {
+
+        JDialog dialog = new JDialog(this, true);
+        dialog.setSize(420, 200);
+        dialog.setLocationRelativeTo(this);
+        dialog.setUndecorated(true);
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+
+        // ===== HEADER =====
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(new Color(145, 26, 26));
+        header.setPreferredSize(new Dimension(420, 55));
+
+        JLabel title = new JLabel("Success");
+        title.setForeground(Color.WHITE);
+        title.setFont(new Font("SansSerif", Font.BOLD, 16));
+        title.setBorder(new EmptyBorder(0, 15, 0, 0));
+
+        JLabel icon = new JLabel(loadIcon("Check.png", 24, 24));
+        icon.setBorder(new EmptyBorder(0, 0, 0, 15));
+
+        header.add(title, BorderLayout.WEST);
+        header.add(icon, BorderLayout.EAST);
+
+        // ===== BODY =====
+        JPanel body = new JPanel();
+        body.setBackground(new Color(245, 240, 235));
+        body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
+
+        JLabel message = new JLabel("Seats added successfully.");
+        message.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        message.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton okBtn = createRoundedButton("OK");
+
+        Dimension size = new Dimension(140, 45);
+        okBtn.setPreferredSize(size);
+        okBtn.setMaximumSize(size);
+        okBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        okBtn.addActionListener(e -> dialog.dispose());
+
+        body.add(Box.createVerticalStrut(25));
+        body.add(message);
+        body.add(Box.createVerticalStrut(25));
+        body.add(okBtn);
+
+        mainPanel.add(header, BorderLayout.NORTH);
+        mainPanel.add(body, BorderLayout.CENTER);
+
+        dialog.add(mainPanel);
+        dialog.setVisible(true);
+    }
+
+    private void showJoinTablesSuccessPopup() {
+
+        JDialog dialog = new JDialog(this, true);
+        dialog.setSize(420, 200);
+        dialog.setLocationRelativeTo(this);
+        dialog.setUndecorated(true);
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+
+        // ===== HEADER =====
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(new Color(145, 26, 26));
+        header.setPreferredSize(new Dimension(420, 55));
+
+        JLabel title = new JLabel("Success");
+        title.setForeground(Color.WHITE);
+        title.setFont(new Font("SansSerif", Font.BOLD, 16));
+        title.setBorder(new EmptyBorder(0, 15, 0, 0));
+
+        JLabel icon = new JLabel(loadIcon("Check.png", 24, 24));
+        icon.setBorder(new EmptyBorder(0, 0, 0, 15));
+
+        header.add(title, BorderLayout.WEST);
+        header.add(icon, BorderLayout.EAST);
+
+        // ===== BODY =====
+        JPanel body = new JPanel();
+        body.setBackground(new Color(245, 240, 235));
+        body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
+
+        JLabel message = new JLabel("Tables joined successfully.");
+        message.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        message.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton okBtn = createRoundedButton("OK");
+
+        Dimension size = new Dimension(140, 45);
+        okBtn.setPreferredSize(size);
+        okBtn.setMaximumSize(size);
+        okBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        okBtn.addActionListener(e -> dialog.dispose());
+
+        body.add(Box.createVerticalStrut(25));
+        body.add(message);
+        body.add(Box.createVerticalStrut(25));
+        body.add(okBtn);
+
+        mainPanel.add(header, BorderLayout.NORTH);
+        mainPanel.add(body, BorderLayout.CENTER);
+
+        dialog.add(mainPanel);
+        dialog.setVisible(true);
+    }
+
+    private void updateSelectedTablesLabel() {
+        if (selectedTables.isEmpty()) {
+            selectedTablesLabel.setText("Selected Tables: None");
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder("Selected Tables: ");
+        for (int i = 0; i < selectedTables.size(); i++) {
+            sb.append(selectedTables.get(i).getTableName());
+            if (i < selectedTables.size() - 1) {
+                sb.append(", ");
+            }
+        }
+
+        selectedTablesLabel.setText(sb.toString());
+    }
+
     private void refreshTableButtons() {
+
         for (Map.Entry<JButton, TableInfo> entry : tableMap.entrySet()) {
+
             JButton btn = entry.getKey();
             TableInfo table = entry.getValue();
+
+            // Update name
             btn.setText(table.getTableName());
+
+            // Update color
             btn.setBackground(getColorForStatus(table.getStatus()));
         }
     }
 
-    private Set<String> getAssignedTables() {
+    private void showAddSeatsPopup() {
 
-        if (currentEmployee == null) {
-            System.out.println("Employee is NULL");
-            return new HashSet<>();
-        }
+        JDialog dialog = new JDialog(this, true);
+        dialog.setSize(420, 260);
+        dialog.setLocationRelativeTo(this);
+        dialog.setUndecorated(true);
 
-        String tables = currentEmployee.getAssignedTables();
+        JPanel main = new JPanel(new BorderLayout());
+        main.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 
-        return new HashSet<>(Arrays.asList(tables.split(" ")));
+        // ===== HEADER =====
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(new Color(145, 26, 26));
+        header.setPreferredSize(new Dimension(420, 55));
+
+        JLabel title = new JLabel("Add Seats");
+        title.setForeground(Color.WHITE);
+        title.setFont(new Font("SansSerif", Font.BOLD, 16));
+        title.setBorder(new EmptyBorder(0, 15, 0, 0));
+
+        JLabel icon = new JLabel(loadIcon("Fork.png", 24, 24));
+        icon.setBorder(new EmptyBorder(0, 0, 0, 15));
+
+        header.add(title, BorderLayout.WEST);
+        header.add(icon, BorderLayout.EAST);
+
+        // ===== BODY =====
+        JPanel body = new JPanel();
+        body.setBackground(new Color(245, 240, 235));
+        body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
+
+        JLabel label = new JLabel("Enter number of seats:");
+        label.setFont(new Font("SansSerif", Font.BOLD, 18));
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JTextField input = new JTextField();
+        input.setMaximumSize(new Dimension(200, 35));
+        input.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        input.setHorizontalAlignment(JTextField.CENTER);
+
+        JPanel buttonRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
+        buttonRow.setOpaque(false);
+
+        JButton cancelBtn = createRoundedButton("Cancel");
+        JButton confirmBtn = createRoundedButton("Add");
+
+        Dimension btnSize = new Dimension(140, 50);
+        cancelBtn.setPreferredSize(btnSize);
+        confirmBtn.setPreferredSize(btnSize);
+
+        // ===== ACTIONS =====
+        cancelBtn.addActionListener(e -> dialog.dispose());
+
+        confirmBtn.addActionListener(e -> {
+            try {
+                int seats = Integer.parseInt(input.getText());
+
+                if (seats <= 0) {
+                    showErrorPopup("Seats must be greater than 0.");
+                    return;
+                }
+
+                selectedTables.get(0).addSeats(seats);
+
+                dialog.dispose();
+                showAddSeatsSuccessPopup();
+
+            } catch (Exception ex) {
+                showErrorPopup("Invalid number.");
+            }
+        });
+
+        buttonRow.add(cancelBtn);
+        buttonRow.add(confirmBtn);
+
+        body.add(Box.createVerticalStrut(20));
+        body.add(label);
+        body.add(Box.createVerticalStrut(15));
+        body.add(input);
+        body.add(Box.createVerticalStrut(25));
+        body.add(buttonRow);
+        body.add(Box.createVerticalStrut(20));
+
+        main.add(header, BorderLayout.NORTH);
+        main.add(body, BorderLayout.CENTER);
+
+        dialog.add(main);
+        dialog.setVisible(true);
     }
 }

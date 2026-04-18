@@ -1,5 +1,8 @@
 package ui;
 
+import models.Employee;
+import models.EmployeeFileHandler;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -168,33 +171,34 @@ public class LoginFrame extends JFrame {
 
         loginButton.addActionListener(e -> {
 
-            String user = usernameField.getText().trim();
-            String pass = new String(passwordField.getPassword()).trim();
+            String usernameInput = usernameField.getText().trim();
+            String passwordInput = new String(passwordField.getPassword()).trim();
 
-            // Clear old message
-            errorContainer.removeAll();
+            for (Employee emp : EmployeeFileHandler.loadEmployees()) {
 
-            // Check if empty
-            if (user.isEmpty() || pass.isEmpty()) {
-                errorContainer.add(createErrorBanner("Please fill in all required fields"));
+                // ONLY ALLOW WAITER + MANAGER FOR REQUIREMENTS
+                if (!emp.getRole().equalsIgnoreCase("Waiter") &&
+                        !emp.getRole().equalsIgnoreCase("Manager")) {
+                    continue; // skip cooks
+                }
+
+                if (emp.getId().equalsIgnoreCase(usernameInput) &&
+                        emp.getPassword().equals(passwordInput)) {
+
+                    if (emp.getRole().equalsIgnoreCase("Waiter")) {
+                        new ClockInFrame(emp);
+                        //new WaitStaffFloorFrame(currentEmployee);
+                    }
+                    else if (emp.getRole().equalsIgnoreCase("Manager")) {
+                        new ManagerFrame();
+                    }
+
+                    dispose();
+                    return;
+                }
             }
 
-            // Check credentials
-            else if (user.equals("admin") && pass.equals("admin123")) {
-                new ManagerFrame();
-            }
-            else if (user.equals("waiter") && pass.equals("123")) {
-                new ClockInFrame();
-                dispose();
-            }
-
-            // 3. Wrong login
-            else {
-                errorContainer.add(createErrorBanner("Invalid Login Credentials"));
-            }
-
-            errorContainer.revalidate();
-            errorContainer.repaint();
+            showErrorPopup("Invalid login.");
         });
 
         setVisible(true);
@@ -244,20 +248,58 @@ public class LoginFrame extends JFrame {
         return button;
     }
 
-    private JPanel createErrorBanner(String message) {
+    private void showErrorPopup(String message) {
 
-        JPanel banner = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
-        banner.setBackground(new Color(245, 245, 245));
-        banner.setBorder(BorderFactory.createLineBorder(new Color(220, 50, 50), 4));
+        JDialog dialog = new JDialog(this, true);
+        dialog.setSize(420, 220);
+        dialog.setLocationRelativeTo(this);
+        dialog.setUndecorated(true);
 
-        JLabel icon = new JLabel(loadIcon("Warning.png", 35, 35));
+        JPanel main = new JPanel(new BorderLayout());
+        main.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(new Color(145, 26, 26));
+        header.setPreferredSize(new Dimension(420, 55));
+
+        JLabel title = new JLabel("Error");
+        title.setForeground(Color.WHITE);
+        title.setFont(new Font("SansSerif", Font.BOLD, 16));
+        title.setBorder(new EmptyBorder(0, 15, 0, 0));
+
+        JLabel warningIcon = new JLabel(loadIcon("Warning.png", 24, 24));
+        warningIcon.setBorder(new EmptyBorder(0, 0, 0, 15));
+
+        header.add(title, BorderLayout.WEST);
+        header.add(warningIcon, BorderLayout.EAST);
+
+        JPanel body = new JPanel();
+        body.setBackground(new Color(245, 240, 235));
+        body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
 
         JLabel text = new JLabel(message);
-        text.setFont(new Font("SansSerif", Font.BOLD, 16));
+        text.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        text.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        banner.add(icon);
-        banner.add(text);
+        JButton okButton = createRoundedButton("OK");
+        okButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        Dimension okSize = new Dimension(140, 55);
+        okButton.setPreferredSize(okSize);
+        okButton.setMinimumSize(okSize);
+        okButton.setMaximumSize(okSize);
 
-        return banner;
+        body.add(Box.createVerticalStrut(28));
+        body.add(text);
+        body.add(Box.createVerticalStrut(35));
+        body.add(okButton);
+        body.add(Box.createVerticalStrut(20));
+
+        okButton.addActionListener(e -> dialog.dispose());
+
+        main.add(header, BorderLayout.NORTH);
+        main.add(body, BorderLayout.CENTER);
+
+        dialog.add(main);
+        dialog.setVisible(true);
     }
 }

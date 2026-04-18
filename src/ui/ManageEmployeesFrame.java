@@ -1,14 +1,20 @@
 package ui;
 
+import models.Employee;
+import models.EmployeeFileHandler;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class ManageEmployeesFrame extends JFrame {
 
     private DefaultTableModel model;
     private JTable table;
+    private ArrayList<Employee> employees = EmployeeFileHandler.loadEmployees();
+
 
     public ManageEmployeesFrame() {
 
@@ -90,7 +96,7 @@ public class ManageEmployeesFrame extends JFrame {
             sidebar.add(btn);
         }
 
-
+        employees = EmployeeFileHandler.loadEmployees();
 
         // ===== MAIN CONTENT =====
         JPanel content = new JPanel(new BorderLayout());
@@ -131,6 +137,7 @@ public class ManageEmployeesFrame extends JFrame {
         table = new JTable(model);
         table.setRowHeight(35);
         table.setFont(new Font("SansSerif", Font.PLAIN, 15));
+        loadTableData();
 
         // CENTER TEXT
         javax.swing.table.DefaultTableCellRenderer center =
@@ -148,27 +155,40 @@ public class ManageEmployeesFrame extends JFrame {
 
         JScrollPane scroll = new JScrollPane(table);
 
-        // ===== SAMPLE DATA (REQUIRED) =====
-        model.addRow(new Object[]{"Alice Brown", "Waiter", "ABrown1", "A1, A2"});
-        model.addRow(new Object[]{"Chris Lee", "Waiter", "CLee2", "B1"});
-        model.addRow(new Object[]{"Maya Patel", "Waiter", "MPatel3", "C3"});
-
-        model.addRow(new Object[]{"John Smith", "Cook", "JSmith4", "-"});
-        model.addRow(new Object[]{"Luis Gomez", "Cook", "LGomez5", "-"});
-        model.addRow(new Object[]{"Emma Davis", "Cook", "EDavis6", "-"});
-
         // ===== BUTTON ACTIONS =====
 
         // ADD
         addBtn.addActionListener(e -> {
-            new EmployeeFormFrame(model, -1);
+
+            EmployeeFormFrame form = new EmployeeFormFrame(model, -1, employees);
+
+            form.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosed(java.awt.event.WindowEvent e) {
+
+                    employees = EmployeeFileHandler.loadEmployees();
+                    loadTableData();
+                }
+            });
         });
 
         // EDIT
         editBtn.addActionListener(e -> {
+
             int row = table.getSelectedRow();
+
             if (row != -1) {
-                new EmployeeFormFrame(model, row);
+
+                EmployeeFormFrame form = new EmployeeFormFrame(model, row, employees);
+
+                form.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosed(java.awt.event.WindowEvent e) {
+
+                        employees = EmployeeFileHandler.loadEmployees();
+                        loadTableData();
+                    }
+                });
             }
         });
 
@@ -176,7 +196,9 @@ public class ManageEmployeesFrame extends JFrame {
         deleteBtn.addActionListener(e -> {
             int row = table.getSelectedRow();
             if (row != -1) {
-                model.removeRow(row);
+                employees.remove(row);
+                EmployeeFileHandler.saveEmployees(employees);
+                loadTableData();
             }
         });
 
@@ -332,5 +354,18 @@ public class ManageEmployeesFrame extends JFrame {
 
         dialog.add(main);
         dialog.setVisible(true);
+    }
+
+    private void loadTableData() {
+        model.setRowCount(0); // clear table
+
+        for (Employee e : employees) {
+            model.addRow(new Object[]{
+                    e.getName(),
+                    e.getRole(),
+                    e.getId(),
+                    e.getAssignedTables()
+            });
+        }
     }
 }

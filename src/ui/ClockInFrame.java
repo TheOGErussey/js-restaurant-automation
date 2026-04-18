@@ -1,5 +1,7 @@
 package ui;
 
+import models.Employee;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -8,8 +10,10 @@ public class ClockInFrame extends JFrame {
 
     private JLabel statusLabel;
     private boolean isClockedIn = false;
+    private Employee currentEmployee;
 
-    public ClockInFrame() {
+    public ClockInFrame(Employee emp) {
+        this.currentEmployee = emp;
 
         setTitle("Wait Staff - J's Corner Restaurant");
         setSize(1280, 720);
@@ -218,7 +222,8 @@ public class ClockInFrame extends JFrame {
         // ===== ACTION =====
         okButton.addActionListener(e -> {
             dialog.dispose();
-            new WaitStaffFloorFrame();
+            new WaitStaffFloorFrame(currentEmployee);
+            dispose();
         });
 
         // ===== BUILD =====
