@@ -5,4 +5,4 @@ Leia Organa,Cook,LOrgana3,-,false
 Karen White,Cook,KWhite1,-,false
 Mike Wazowski,Cook,MWazowski7,-,false
 Manager James,Manager,admin,-,true
-Bella Doe,Cook,BDoe10,-,false
+
