@@ -231,22 +231,22 @@ public class ManageOrderFrame extends JFrame {
         sidePanel.add(statusLabel);
         sidePanel.add(Box.createVerticalStrut(10));
         sidePanel.add(seatsLabel);
-        sidePanel.add(Box.createVerticalStrut(30));
+        sidePanel.add(Box.createVerticalStrut(15));
 
         sidePanel.add(createOrderBtn);
-        sidePanel.add(Box.createVerticalStrut(15));
+        sidePanel.add(Box.createVerticalStrut(10));
 
         sidePanel.add(updateOrderBtn);
-        sidePanel.add(Box.createVerticalStrut(15));
+        sidePanel.add(Box.createVerticalStrut(10));
 
         sidePanel.add(orderStatusBtn);
-        sidePanel.add(Box.createVerticalStrut(15));
+        sidePanel.add(Box.createVerticalStrut(10));
 
         sidePanel.add(checkoutBtn);
-        sidePanel.add(Box.createVerticalStrut(15));
+        sidePanel.add(Box.createVerticalStrut(10));
 
         sidePanel.add(cancelBtn);
-        sidePanel.add(Box.createVerticalStrut(15));
+        sidePanel.add(Box.createVerticalStrut(10));
 
         sidePanel.add(refundBtn);
 
