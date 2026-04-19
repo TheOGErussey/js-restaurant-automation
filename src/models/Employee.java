@@ -25,8 +25,4 @@ public class Employee {
     public boolean isAuthorized() { return authorized; }
     public String getPassword() {return password; }
 
-    public void setName(String name) { this.name = name; }
-    public void setRole(String role) { this.role = role; }
-    public void setAssignedTables(String tables) { this.assignedTables = tables; }
-    public void setAuthorized(boolean authorized) { this.authorized = authorized; }
 }

@@ -2,6 +2,8 @@ package ui;
 
 import models.Employee;
 import models.EmployeeFileHandler;
+import models.ActivityLogger;
+import models.Session;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -74,9 +76,8 @@ public class LoginFrame extends JFrame {
         JTextField usernameField = new JTextField();
         usernameField.setBackground(new Color(230, 230, 230));
         usernameField.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-        //usernameField.setPreferredSize(new Dimension(250, 45));
         usernameField.setPreferredSize(new Dimension(300, 50));
-        usernameField.setFont(new Font("SansSerif", Font.PLAIN, 18)); // bigger text
+        usernameField.setFont(new Font("SansSerif", Font.PLAIN, 18));
 
         userRow.add(userLabel);
         userRow.add(usernameField);
@@ -91,7 +92,6 @@ public class LoginFrame extends JFrame {
 
         JPanel passwordPanel = new JPanel(new BorderLayout());
         passwordPanel.setBackground(new Color(230, 230, 230));
-        //passwordPanel.setPreferredSize(new Dimension(250, 45));
         passwordPanel.setPreferredSize(new Dimension(300, 50));
 
         passwordField = new JPasswordField();
@@ -179,15 +179,15 @@ public class LoginFrame extends JFrame {
                 // ONLY ALLOW WAITER + MANAGER FOR REQUIREMENTS
                 if (!emp.getRole().equalsIgnoreCase("Waiter") &&
                         !emp.getRole().equalsIgnoreCase("Manager")) {
-                    continue; // skip cooks
+                    continue;
                 }
 
                 if (emp.getId().equalsIgnoreCase(usernameInput) &&
                         emp.getPassword().equals(passwordInput)) {
-
+                    Session.setUser(emp);
+                    ActivityLogger.log(emp.getName() + " logged in");
                     if (emp.getRole().equalsIgnoreCase("Waiter")) {
                         new ClockInFrame(emp);
-                        //new WaitStaffFloorFrame(currentEmployee);
                     }
                     else if (emp.getRole().equalsIgnoreCase("Manager")) {
                         new ManagerFrame();

@@ -3,6 +3,9 @@ package ui;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import models.*;
 
@@ -13,6 +16,7 @@ public class ManageOrderFrame extends JFrame {
     private JButton selectedButton = null;
     private TableInfo table;
     private Employee currentEmployee;
+    private JLabel seatsLabel;
 
     private final Color OPEN = new Color(110, 200, 80);
     private final Color OCCUPIED = new Color(240, 200, 80);
@@ -159,6 +163,10 @@ public class ManageOrderFrame extends JFrame {
         statusLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
         statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        seatsLabel = new JLabel("Seats: " + table.getSeats());
+        seatsLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
+        seatsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         // ===== LOAD ORDER =====
         if (table.getCurrentOrder() != null) {
 
@@ -221,6 +229,8 @@ public class ManageOrderFrame extends JFrame {
         sidePanel.add(selectedTableLabel);
         sidePanel.add(Box.createVerticalStrut(10));
         sidePanel.add(statusLabel);
+        sidePanel.add(Box.createVerticalStrut(10));
+        sidePanel.add(seatsLabel);
         sidePanel.add(Box.createVerticalStrut(30));
 
         sidePanel.add(createOrderBtn);
@@ -256,16 +266,20 @@ public class ManageOrderFrame extends JFrame {
     // ===== TABLE METHOD =====
     private void addTable(JPanel panel, String name, Color color, int x, int y, GridBagConstraints gbc) {
         JButton btn = new JButton(name);
-
         Dimension size = new Dimension(85, 75);
         btn.setPreferredSize(size);
         btn.setMinimumSize(size);
         btn.setMaximumSize(size);
-
         btn.setBackground(color);
         btn.setFocusPainted(false);
-        btn.setBorderPainted(false);
+        btn.setBorderPainted(true);
         btn.setFont(new Font("SansSerif", Font.BOLD, 16));
+
+        Set<String> assigned = getAssignedTables();
+
+        if (assigned.contains(name.trim())) {
+            btn.setBorder(BorderFactory.createLineBorder(Color.BLUE, 4));
+        }
 
         btn.addActionListener(e -> {
 
@@ -369,7 +383,14 @@ public class ManageOrderFrame extends JFrame {
         cancelBtn.addActionListener(e -> dialog.dispose());
 
         logoutBtn.addActionListener(e -> {
-            dialog.dispose();
+            Employee user = Session.getUser();
+
+            if (user != null) {
+                ActivityLogger.log(user.getName() + " logged out");
+            }
+
+            Session.clear();
+
             new LoginFrame();
             dispose();
         });
@@ -639,5 +660,17 @@ public class ManageOrderFrame extends JFrame {
         dialog.setVisible(true);
 
         return result[0]; // null if cancelled
+    }
+
+    private Set<String> getAssignedTables() {
+
+        if (currentEmployee == null) {
+            System.out.println("Employee is NULL");
+            return new HashSet<>();
+        }
+
+        String tables = currentEmployee.getAssignedTables();
+
+        return new HashSet<>(Arrays.asList(tables.split(" ")));
     }
 }

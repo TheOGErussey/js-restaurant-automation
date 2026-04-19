@@ -1,9 +1,8 @@
 package ui;
 
-import models.Employee;
-import models.Order;
-import models.OrderItem;
-import models.TableInfo;
+import models.*;
+import models.ActivityLogger;
+import models.Session;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -157,6 +156,11 @@ public class CreateOrderFrame extends JFrame {
             }
 
             System.out.println("-----------------------------");
+
+            Employee user = Session.getUser();
+            if (user != null) {
+                ActivityLogger.log(user.getName() + " sent order for table " + table.getTableName());
+            }
 
             orderCounter++;
 
@@ -342,6 +346,11 @@ public class CreateOrderFrame extends JFrame {
     // ===== ADD ITEM =====
     private void addItemToTable(String item) {
 
+        Employee user = Session.getUser();
+        if (user != null) {
+            ActivityLogger.log(user.getName() + " added item: " + item);
+        }
+
         double price = getPrice(item);
 
         // Check if item already exists
@@ -503,7 +512,14 @@ public class CreateOrderFrame extends JFrame {
         cancelBtn.addActionListener(e -> dialog.dispose());
 
         logoutBtn.addActionListener(e -> {
-            dialog.dispose();
+            Employee user = Session.getUser();
+
+            if (user != null) {
+                ActivityLogger.log(user.getName() + " logged out");
+            }
+
+            Session.clear();
+
             new LoginFrame();
             dispose();
         });

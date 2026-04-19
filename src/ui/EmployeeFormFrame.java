@@ -2,6 +2,8 @@ package ui;
 
 import models.Employee;
 import models.EmployeeFileHandler;
+import models.ActivityLogger;
+import models.Session;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -177,11 +179,9 @@ public class EmployeeFormFrame extends JFrame {
             if (isEdit) {
                 Employee oldEmp = employees.get(row);
 
-                // PRESERVE PASSWORD
                 String password = oldEmp.getPassword();
                 boolean authorized = oldEmp.isAuthorized();
 
-                // CREATE NEW EMPLOYEE
                 Employee updated = new Employee(
                         name,
                         username,
@@ -192,6 +192,7 @@ public class EmployeeFormFrame extends JFrame {
                 );
 
                 employees.set(row, updated);
+                ActivityLogger.log("Employee " + name + " was EDITED");
 
             } else {
 
@@ -205,6 +206,7 @@ public class EmployeeFormFrame extends JFrame {
                 );
 
                 employees.add(newEmp);
+                ActivityLogger.log("Employee " + name + " was ADDED");
             }
 
             EmployeeFileHandler.saveEmployees(employees);
@@ -415,7 +417,14 @@ public class EmployeeFormFrame extends JFrame {
         cancelButton.addActionListener(e -> dialog.dispose());
 
         logoutButton.addActionListener(e -> {
-            dialog.dispose();
+            Employee user = Session.getUser();
+
+            if (user != null) {
+                ActivityLogger.log(user.getName() + " logged out");
+            }
+
+            Session.clear();
+
             new LoginFrame();
             dispose();
         });

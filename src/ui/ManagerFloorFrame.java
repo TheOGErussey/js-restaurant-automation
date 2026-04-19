@@ -6,17 +6,15 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import models.TableInfo;
-import models.TableManager;
-import models.TableRegistry;
+
+import models.*;
 
 public class ManagerFloorFrame extends JFrame {
 
     private JLabel selectedTableLabel;
     private JLabel statusLabel;
+    private JLabel seatsLabel;
     private JLabel selectedTablesLabel;
-
-    private JButton selectedTableButton = null;
 
     private final Color OPEN = new Color(110, 200, 80);
     private final Color OCCUPIED = new Color(240, 200, 80);
@@ -170,6 +168,10 @@ public class ManagerFloorFrame extends JFrame {
         statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         statusLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
 
+        seatsLabel = new JLabel("Seats: ");
+        seatsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        seatsLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
+
         JButton addSeatsBtn = createRoundedButton("Add Seats");
         JButton joinTablesBtn = createRoundedButton("Join Tables");
         JButton cancelBtn = createRoundedButton("Cancel");
@@ -196,6 +198,8 @@ public class ManagerFloorFrame extends JFrame {
         sidePanel.add(selectedTablesLabel);
         sidePanel.add(Box.createVerticalStrut(10));
         sidePanel.add(statusLabel);
+        sidePanel.add(Box.createVerticalStrut(10));
+        sidePanel.add(seatsLabel);
         sidePanel.add(Box.createVerticalStrut(40));
         sidePanel.add(addSeatsBtn);
         sidePanel.add(Box.createVerticalStrut(20));
@@ -218,14 +222,23 @@ public class ManagerFloorFrame extends JFrame {
 
         cancelBtn.addActionListener(e -> {
 
-            selectedTables.clear();
+            // If something is selected → clear it
+            if (!selectedTables.isEmpty()) {
 
-            // remove highlights from all buttons
-            for (JButton b : tableMap.keySet()) {
-                b.setBorder(null);
+                selectedTables.clear();
+
+                for (JButton b : tableMap.keySet()) {
+                    b.setBorder(null);
+                }
+
+                updateSelectedTablesLabel();
+
             }
-
-            updateSelectedTablesLabel();
+            // If nothing is selected → go back to dashboard
+            else {
+                new ManagerFrame(); // go back
+                dispose(); // close this screen
+            }
         });
 
         joinTablesBtn.addActionListener(e -> {
@@ -296,6 +309,11 @@ public class ManagerFloorFrame extends JFrame {
             }
 
             updateSelectedTablesLabel();
+            if (!selectedTables.isEmpty()) {
+                TableInfo t = selectedTables.get(0);
+                statusLabel.setText("Status: " + t.getStatus());
+                seatsLabel.setText("Seats: " + t.getSeats());
+            }
         });
 
         // ===== ADD TO PANEL =====
@@ -463,7 +481,14 @@ public class ManagerFloorFrame extends JFrame {
         cancelButton.addActionListener(e -> dialog.dispose());
 
         logoutButton.addActionListener(e -> {
-            dialog.dispose();
+            Employee user = Session.getUser();
+
+            if (user != null) {
+                ActivityLogger.log(user.getName() + " logged out");
+            }
+
+            Session.clear();
+
             new LoginFrame();
             dispose();
         });

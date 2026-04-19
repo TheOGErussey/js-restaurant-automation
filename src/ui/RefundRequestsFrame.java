@@ -1,7 +1,8 @@
 package ui;
 
-import models.RefundRequest;
-import models.RequestManager;
+import models.*;
+import models.ActivityLogger;
+import models.Session;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -40,11 +41,11 @@ public class RefundRequestsFrame extends JFrame {
 
         JLabel welcome = new JLabel("Welcome, Manager");
         welcome.setForeground(Color.WHITE);
-        welcome.setFont(new Font("SansSerif", Font.BOLD, 14));
+        welcome.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
         JLabel logout = new JLabel("Logout");
         logout.setForeground(Color.WHITE);
-        logout.setFont(new Font("SansSerif", Font.BOLD, 14));
+        logout.setFont(new Font("SansSerif", Font.PLAIN, 14));
         logout.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         logout.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -69,6 +70,7 @@ public class RefundRequestsFrame extends JFrame {
                 "DASHBOARD",
                 "REFUND REQUESTS",
                 "MANAGE EMPLOYEES",
+                "REARRANGE TABLES",
                 "MANAGE MENU",
                 "MANAGE INVENTORY",
                 "GENERATE REPORTS"
@@ -93,6 +95,13 @@ public class RefundRequestsFrame extends JFrame {
 
             if (item.equals("REFUND REQUESTS")) {
                 btn.setEnabled(false);
+            }
+
+            if (item.equals("REARRANGE TABLES")) {
+                btn.addActionListener(e -> {
+                    new ManagerFloorFrame();
+                    dispose();
+                });
             }
 
             sidebar.add(Box.createVerticalStrut(20));
@@ -278,6 +287,10 @@ public class RefundRequestsFrame extends JFrame {
 
         denyBtn.addActionListener(e -> {
             request.deny();
+            Employee user = Session.getUser();
+            if (user != null) {
+                ActivityLogger.log(user.getName() + " DENIED refund for table " + request.getTableName());
+            }
             RequestManager.requests.remove(request);
             dialog.dispose();
             refreshRequests();
@@ -285,6 +298,10 @@ public class RefundRequestsFrame extends JFrame {
 
         approveBtn.addActionListener(e -> {
             request.approve();
+            Employee user = Session.getUser();
+            if (user != null) {
+                ActivityLogger.log(user.getName() + " APPROVED refund for table " + request.getTableName());
+            }
             RequestManager.requests.remove(request);
             dialog.dispose();
             refreshRequests();
@@ -415,7 +432,14 @@ public class RefundRequestsFrame extends JFrame {
 
         cancelButton.addActionListener(e -> dialog.dispose());
         logoutButton.addActionListener(e -> {
-            dialog.dispose();
+            Employee user = Session.getUser();
+
+            if (user != null) {
+                ActivityLogger.log(user.getName() + " logged out");
+            }
+
+            Session.clear();
+
             new LoginFrame();
             dispose();
         });

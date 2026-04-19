@@ -1,5 +1,9 @@
 package ui;
 
+import models.ActivityLogger;
+import models.Employee;
+import models.Session;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -283,7 +287,14 @@ public class ManagerFrame extends JFrame {
         cancelButton.addActionListener(e -> dialog.dispose());
 
         logoutButton.addActionListener(e -> {
-            dialog.dispose();
+            Employee user = Session.getUser();
+
+            if (user != null) {
+                ActivityLogger.log(user.getName() + " logged out");
+            }
+
+            Session.clear();
+
             new LoginFrame();
             dispose();
         });

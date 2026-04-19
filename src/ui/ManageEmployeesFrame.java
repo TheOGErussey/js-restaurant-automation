@@ -8,6 +8,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
+import models.ActivityLogger;
+import models.Session;
 
 public class ManageEmployeesFrame extends JFrame {
 
@@ -46,11 +48,11 @@ public class ManageEmployeesFrame extends JFrame {
 
         JLabel welcome = new JLabel("Welcome, Manager");
         welcome.setForeground(Color.WHITE);
-        welcome.setFont(new Font("SansSerif", Font.BOLD, 14));
+        welcome.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
         JLabel logout = new JLabel("Logout");
         logout.setForeground(Color.WHITE);
-        logout.setFont(new Font("SansSerif", Font.BOLD, 14));
+        logout.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
         logout.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
@@ -76,6 +78,7 @@ public class ManageEmployeesFrame extends JFrame {
                 "DASHBOARD",
                 "REFUND REQUESTS",
                 "MANAGE EMPLOYEES",
+                "REARRANGE TABLES",
                 "MANAGE MENU",
                 "MANAGE INVENTORY",
                 "GENERATE REPORTS"
@@ -88,6 +91,13 @@ public class ManageEmployeesFrame extends JFrame {
             if (item.equals("DASHBOARD")) {
                 btn.addActionListener(e -> {
                     new ManagerFrame();
+                    dispose();
+                });
+            }
+
+            if (item.equals("REARRANGE TABLES")) {
+                btn.addActionListener(e -> {
+                    new ManagerFloorFrame(); // new screen
                     dispose();
                 });
             }
@@ -196,9 +206,14 @@ public class ManageEmployeesFrame extends JFrame {
         deleteBtn.addActionListener(e -> {
             int row = table.getSelectedRow();
             if (row != -1) {
+
+                String name = employees.get(row).getName(); // get name BEFORE removing
+
                 employees.remove(row);
                 EmployeeFileHandler.saveEmployees(employees);
                 loadTableData();
+
+                ActivityLogger.log("Employee " + name + " was DELETED");
             }
         });
 
@@ -343,7 +358,14 @@ public class ManageEmployeesFrame extends JFrame {
         cancelButton.addActionListener(e -> dialog.dispose());
 
         logoutButton.addActionListener(e -> {
-            dialog.dispose();
+            Employee user = Session.getUser();
+
+            if (user != null) {
+                ActivityLogger.log(user.getName() + " logged out");
+            }
+
+            Session.clear();
+
             new LoginFrame();
             dispose();
         });

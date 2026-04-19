@@ -13,8 +13,4 @@ public class Order {
     public void addItem(OrderItem item) {
         items.add(item);
     }
-
-    public ArrayList<OrderItem> getItems() {
-        return items;
-    }
 }

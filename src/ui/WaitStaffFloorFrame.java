@@ -5,15 +5,15 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.*;
 
-import models.Employee;
-import models.TableInfo;
-import models.TableManager;
-import models.TableRegistry;
+import models.*;
+import models.ActivityLogger;
+import models.Session;
 
 public class WaitStaffFloorFrame extends JFrame {
 
     private JLabel selectedTableLabel;
     private JLabel statusLabel;
+    private JLabel seatsLabel;
     private Employee currentEmployee;
 
     private JButton selectedTableButton = null;
@@ -169,6 +169,10 @@ public class WaitStaffFloorFrame extends JFrame {
         statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         statusLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
 
+        seatsLabel = new JLabel("Seats: ");
+        seatsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        seatsLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
+
         JButton updateBtn = createRoundedButton("Update Status");
         JButton orderBtn = createRoundedButton("Manage Order");
         JButton cancelBtn = createRoundedButton("Cancel");
@@ -195,6 +199,8 @@ public class WaitStaffFloorFrame extends JFrame {
         sidePanel.add(selectedTableLabel);
         sidePanel.add(Box.createVerticalStrut(10));
         sidePanel.add(statusLabel);
+        sidePanel.add(Box.createVerticalStrut(10));
+        sidePanel.add(seatsLabel);
         sidePanel.add(Box.createVerticalStrut(40));
         sidePanel.add(updateBtn);
         sidePanel.add(Box.createVerticalStrut(20));
@@ -295,6 +301,7 @@ public class WaitStaffFloorFrame extends JFrame {
 
             selectedTableLabel.setText("Table Selected: " + name);
             statusLabel.setText("Status: " + selectedTable.getStatus());
+            seatsLabel.setText("Seats: " + selectedTable.getSeats());
         });
 
         gbc.gridx = x;
@@ -461,7 +468,14 @@ public class WaitStaffFloorFrame extends JFrame {
         cancelButton.addActionListener(e -> dialog.dispose());
 
         logoutButton.addActionListener(e -> {
-            dialog.dispose();
+            Employee user = Session.getUser();
+
+            if (user != null) {
+                ActivityLogger.log(user.getName() + " logged out");
+            }
+
+            Session.clear();
+
             new LoginFrame();
             dispose();
         });
@@ -472,15 +486,6 @@ public class WaitStaffFloorFrame extends JFrame {
 
         dialog.add(main);
         dialog.setVisible(true);
-    }
-
-    private void refreshTableButtons() {
-        for (Map.Entry<JButton, TableInfo> entry : tableMap.entrySet()) {
-            JButton btn = entry.getKey();
-            TableInfo table = entry.getValue();
-            btn.setText(table.getTableName());
-            btn.setBackground(getColorForStatus(table.getStatus()));
-        }
     }
 
     private Set<String> getAssignedTables() {

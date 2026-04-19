@@ -67,11 +67,6 @@ public class TableInfo {
         this.status = "Dirty";
     }
 
-    // Check if table has active order
-    public boolean hasActiveOrder() {
-        return currentOrder != null;
-    }
-
     public void addSeats(int amount) {
         seats += amount;
     }
