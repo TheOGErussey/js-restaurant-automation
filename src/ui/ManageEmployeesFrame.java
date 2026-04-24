@@ -48,11 +48,11 @@ public class ManageEmployeesFrame extends JFrame {
 
         JLabel welcome = new JLabel("Welcome, Manager");
         welcome.setForeground(Color.WHITE);
-        welcome.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        welcome.setFont(new Font("SansSerif", Font.BOLD, 14));
 
         JLabel logout = new JLabel("Logout");
         logout.setForeground(Color.WHITE);
-        logout.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        logout.setFont(new Font("SansSerif", Font.BOLD, 14));
 
         logout.setCursor(new Cursor(Cursor.HAND_CURSOR));
 

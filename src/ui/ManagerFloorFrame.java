@@ -55,9 +55,11 @@ public class ManagerFloorFrame extends JFrame {
 
         JLabel welcome = new JLabel("Welcome, Manager");
         welcome.setForeground(Color.WHITE);
+        welcome.setFont(new Font("SansSerif", Font.BOLD, 14));
 
         JLabel logout = new JLabel("Logout");
         logout.setForeground(Color.WHITE);
+        logout.setFont(new Font("SansSerif", Font.BOLD, 14));
         logout.setCursor(new Cursor(Cursor.HAND_CURSOR));
         logout.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
@@ -222,7 +224,7 @@ public class ManagerFloorFrame extends JFrame {
 
         cancelBtn.addActionListener(e -> {
 
-            // If something is selected → clear it
+            // If something is selected, clear it
             if (!selectedTables.isEmpty()) {
 
                 selectedTables.clear();
@@ -234,7 +236,7 @@ public class ManagerFloorFrame extends JFrame {
                 updateSelectedTablesLabel();
 
             }
-            // If nothing is selected → go back to dashboard
+            // If nothing is selected, go back to dashboard
             else {
                 new ManagerFrame(); // go back
                 dispose(); // close this screen
@@ -284,12 +286,15 @@ public class ManagerFloorFrame extends JFrame {
         btn.setFocusPainted(false);
         btn.setBorderPainted(false);
 
-        // ===== CREATE TABLE OBJECT =====
-        TableInfo table = new TableInfo(name);
-        table.setStatus(status);
+        // Table
+        TableInfo table = TableManager.getTable(name);
 
-        TableRegistry.tables.add(table);
-        TableManager.tables.add(table);
+        if (table == null) {
+            table = new TableInfo(name);
+            table.setStatus(status);
+            TableManager.tables.add(table);
+        }
+
         tableMap.put(btn, table);
 
         // ===== KEEP EXISTING MAPS =====
@@ -330,6 +335,8 @@ public class ManagerFloorFrame extends JFrame {
                 return OCCUPIED;
             case "Dirty":
                 return DIRTY;
+            case "Joined":
+                return Color.DARK_GRAY; // 👈 NEW
             default:
                 return OPEN;
         }
@@ -638,7 +645,17 @@ public class ManagerFloorFrame extends JFrame {
             TableInfo table = entry.getValue();
 
             // Update name
-            btn.setText(table.getTableName());
+            if ("Joined".equals(table.getStatus())) {
+                btn.setText("JOINED");
+            } else {
+                btn.setText(table.getTableName());
+            }
+
+            if ("Joined".equals(table.getStatus())) {
+                btn.setEnabled(false);
+            } else {
+                btn.setEnabled(true);
+            }
 
             // Update color
             btn.setBackground(getColorForStatus(table.getStatus()));
@@ -708,6 +725,9 @@ public class ManagerFloorFrame extends JFrame {
                 }
 
                 selectedTables.get(0).addSeats(seats);
+
+                TableInfo t = selectedTables.get(0);
+                seatsLabel.setText("Seats: " + t.getSeats());
 
                 dialog.dispose();
                 showAddSeatsSuccessPopup();

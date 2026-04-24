@@ -52,9 +52,11 @@ public class ManageOrderFrame extends JFrame {
 
         JLabel welcome = new JLabel("Welcome, Wait Staff");
         welcome.setForeground(Color.WHITE);
+        welcome.setFont(new Font("SansSerif", Font.BOLD, 14));
 
         JLabel logout = new JLabel("Logout");
         logout.setForeground(Color.WHITE);
+        logout.setFont(new Font("SansSerif", Font.BOLD, 14));
         logout.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         logout.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -211,7 +213,7 @@ public class ManageOrderFrame extends JFrame {
             dispose();
         });
 
-        Dimension btnSize = new Dimension(160, 50);
+        Dimension btnSize = new Dimension(200, 50);
 
         JButton[] buttons = {
                 createOrderBtn, updateOrderBtn, orderStatusBtn, checkoutBtn, refundBtn, cancelBtn
@@ -290,11 +292,13 @@ public class ManageOrderFrame extends JFrame {
             selectedButton = btn;
             btn.setBackground(Color.LIGHT_GRAY);
 
-            selectedTableLabel.setText("Table Selected: " + name);
+            TableInfo realTable = TableManager.getTable(name);
 
-            if (color.equals(OPEN)) statusLabel.setText("Status: Open");
-            else if (color.equals(OCCUPIED)) statusLabel.setText("Status: Occupied");
-            else statusLabel.setText("Status: Dirty");
+            if (realTable != null) {
+                selectedTableLabel.setText("Table Selected: " + name);
+                statusLabel.setText("Status: " + realTable.getStatus());
+                seatsLabel.setText("Seats: " + realTable.getSeats());
+            }
         });
 
         gbc.gridx = x;
@@ -609,10 +613,11 @@ public class ManageOrderFrame extends JFrame {
         body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
 
         JLabel message = new JLabel("Enter refund reason:");
-        message.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        message.setFont(new Font("SansSerif", Font.PLAIN, 18));
         message.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JTextArea input = new JTextArea(3, 20);
+        JTextArea input = new JTextArea(4, 25);
+        input.setFont(new Font("SansSerif", Font.PLAIN, 18));
         input.setLineWrap(true);
         input.setWrapStyleWord(true);
 

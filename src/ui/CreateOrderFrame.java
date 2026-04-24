@@ -48,9 +48,11 @@ public class CreateOrderFrame extends JFrame {
 
         JLabel welcome = new JLabel("Welcome, Wait Staff");
         welcome.setForeground(Color.WHITE);
+        welcome.setFont(new Font("SansSerif", Font.BOLD, 14));
 
         JLabel logout = new JLabel("Logout");
         logout.setForeground(Color.WHITE);
+        logout.setFont(new Font("SansSerif", Font.BOLD, 14));
         logout.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         logout.addMouseListener(new java.awt.event.MouseAdapter() {

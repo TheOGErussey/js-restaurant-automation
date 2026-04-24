@@ -57,9 +57,11 @@ public class WaitStaffFloorFrame extends JFrame {
 
         JLabel welcome = new JLabel("Welcome, Wait Staff");
         welcome.setForeground(Color.WHITE);
+        welcome.setFont(new Font("SansSerif", Font.BOLD, 14));
 
         JLabel logout = new JLabel("Logout");
         logout.setForeground(Color.WHITE);
+        logout.setFont(new Font("SansSerif", Font.BOLD, 14));
         logout.setCursor(new Cursor(Cursor.HAND_CURSOR));
         logout.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
@@ -280,13 +282,22 @@ public class WaitStaffFloorFrame extends JFrame {
             btn.setBorder(BorderFactory.createLineBorder(Color.BLUE, 4));
         }
 
-        // CREATE REAL TABLE OBJECT
-        TableInfo table = new TableInfo(name);
-        table.setStatus(status);
-        TableRegistry.tables.add(table);
+        //Table
+        TableInfo table = TableManager.getTable(name);
 
-        // STORE IT
-        TableManager.tables.add(table);
+        if (table == null) {
+            table = new TableInfo(name);
+            table.setStatus(status);
+            TableManager.tables.add(table);
+        }
+
+        // Handle joined tables visually
+        if ("Joined".equals(table.getStatus())) {
+            btn.setText("JOINED");
+            btn.setEnabled(false);
+            btn.setBackground(Color.DARK_GRAY);
+        }
+
         tableMap.put(btn, table);
 
         // KEEP EXISTING UI MAPS
@@ -296,8 +307,13 @@ public class WaitStaffFloorFrame extends JFrame {
         btn.addActionListener(e -> {
             selectedTableButton = btn;
 
-            // GET THE TABLE OBJECT
             TableInfo selectedTable = tableMap.get(btn);
+
+            // Prevent clicking joined tables
+            if ("Joined".equals(selectedTable.getStatus())) {
+                showErrorPopup("This table is already joined.");
+                return;
+            }
 
             selectedTableLabel.setText("Table Selected: " + name);
             statusLabel.setText("Status: " + selectedTable.getStatus());
@@ -317,6 +333,8 @@ public class WaitStaffFloorFrame extends JFrame {
                 return OCCUPIED;
             case "Dirty":
                 return DIRTY;
+            case "Joined":
+                return Color.DARK_GRAY; // NEW
             default:
                 return OPEN;
         }
