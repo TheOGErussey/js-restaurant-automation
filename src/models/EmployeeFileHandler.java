@@ -15,7 +15,8 @@ public class EmployeeFileHandler {
                         e.getRole() + "," +
                         e.getId() + "," +
                         e.getAssignedTables() + "," +
-                        e.isAuthorized()
+                        e.isAuthorized() + "," +
+                        e.getPassword()
                 );
             }
         } catch (Exception e) {
@@ -39,13 +40,13 @@ public class EmployeeFileHandler {
                         parts[1], // role
                         parts[3], // tables
                         Boolean.parseBoolean(parts[4]),
-                        "123" // default password
+                        parts.length > 5 ? parts[5] : "123"
                 ));
 
             }
 
-        } catch (Exception e) {
-            System.out.println("No file yet.");
+        } catch (Exception _) {
+
         }
 
         return list;

@@ -1,8 +1,8 @@
-Jon Snow,Waiter,JSnow4,A1 A2 A3 A4 A5 A6,false
-Bob Ross,Waiter,BRoss2,B1 B2 B3 B4 B5 B6,false
-Isabelle James,Waiter,IJames9,C5 C6 D5 D6 E1 E2,false
+Jon Snow,Waiter,JSnow4,A1 A2 A3 A4 A5 A6,false,GOTRox12$
+Bob Ross,Waiter,BRoss2,B1 B2 B3 B4 B5 B6,false,BossyRoss43!
+Isabelle James,Waiter,IJames9,C5 C6 D5 D6 E1 E2,false,AppleWorm2
 Leia Organa,Cook,LOrgana3,-,false
 Karen White,Cook,KWhite1,-,false
 Mike Wazowski,Cook,MWazowski7,-,false
-Manager James,Manager,admin,-,true
+Manager James,Manager,adminJames,-,true,TiredWheel87
 

@@ -13,6 +13,7 @@ import java.awt.*;
 public class EmployeeFormFrame extends JFrame {
 
     private java.util.ArrayList<Employee> employees;
+    private boolean passwordVisible = false;
 
     public EmployeeFormFrame(DefaultTableModel model, int row, java.util.ArrayList<Employee> employees) {
 
@@ -108,13 +109,39 @@ public class EmployeeFormFrame extends JFrame {
         card.setBackground(new Color(245, 240, 235));
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBorder(new EmptyBorder(30, 50, 30, 50));
-        card.setMaximumSize(new Dimension(650, 500));
-        card.setPreferredSize(new Dimension(650, 500));
+        card.setMaximumSize(new Dimension(650, 600));
+        card.setPreferredSize(new Dimension(650, 600));
 
         // ===== FIELDS =====
         JTextField nameField = new JTextField();
         JTextField usernameField = new JTextField();
         JTextField tablesField = new JTextField();
+        JPasswordField passwordField = new JPasswordField();
+        passwordField.setEchoChar('*');
+
+        // Create wrapper panel
+        JPanel passwordPanel = new JPanel(new BorderLayout());
+        passwordPanel.setBackground(new Color(230, 230, 230));
+
+        // Eye button
+        JButton eyeButton = new JButton(loadIcon("Eye.png", 18, 18));
+        eyeButton.setPreferredSize(new Dimension(30, 30));
+        eyeButton.setBorderPainted(false);
+        eyeButton.setContentAreaFilled(false);
+
+        // Toggle logic
+        eyeButton.addActionListener(e -> {
+            if (passwordVisible) {
+                passwordField.setEchoChar('*');
+                passwordVisible = false;
+            } else {
+                passwordField.setEchoChar((char) 0);
+                passwordVisible = true;
+            }
+        });
+
+        passwordPanel.add(passwordField, BorderLayout.CENTER);
+        passwordPanel.add(eyeButton, BorderLayout.EAST);
 
         String[] roles = {"Waiter", "Cook", "Busboy", "Manager"};
         JComboBox<String> roleBox = new JComboBox<>(roles);
@@ -125,12 +152,16 @@ public class EmployeeFormFrame extends JFrame {
             roleBox.setSelectedItem(model.getValueAt(row, 1));
             usernameField.setText((String) model.getValueAt(row, 2));
             tablesField.setText((String) model.getValueAt(row, 3));
+
+            Employee oldEmp = employees.get(row);
+            passwordField.setText(oldEmp.getPassword());
         }
 
         card.add(createField("Name:", nameField));
         card.add(createField("Role:", roleBox));
         card.add(createField("Username:", usernameField));
         card.add(createField("Tables:", tablesField));
+        card.add(createField("Password:", passwordPanel));
 
         card.add(Box.createVerticalStrut(20));
 
@@ -157,6 +188,7 @@ public class EmployeeFormFrame extends JFrame {
             String role = (String) roleBox.getSelectedItem();
             String username = usernameField.getText().trim();
             String tables = tablesField.getText().trim();
+            String password = new String(passwordField.getPassword()).trim();
 
             // ===== EMPTY FIELD CHECK =====
             if (name.isEmpty() || username.isEmpty()) {
@@ -179,7 +211,10 @@ public class EmployeeFormFrame extends JFrame {
             if (isEdit) {
                 Employee oldEmp = employees.get(row);
 
-                String password = oldEmp.getPassword();
+                if (password.isEmpty()) {
+                    password = oldEmp.getPassword(); // keep old if blank
+                }
+
                 boolean authorized = oldEmp.isAuthorized();
 
                 Employee updated = new Employee(
@@ -202,7 +237,7 @@ public class EmployeeFormFrame extends JFrame {
                         role,
                         tables,
                         false,
-                        "123"
+                        password
                 );
 
                 employees.add(newEmp);

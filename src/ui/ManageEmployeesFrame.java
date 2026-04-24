@@ -141,7 +141,7 @@ public class ManageEmployeesFrame extends JFrame {
 
         // ===== TABLE =====
         model = new DefaultTableModel(
-                new Object[]{"Name", "Role", "Username", "Tables"}, 0
+                new Object[]{"Name", "Role", "Username", "Tables", "Password"}, 0
         );
 
         table = new JTable(model);
@@ -386,7 +386,8 @@ public class ManageEmployeesFrame extends JFrame {
                     e.getName(),
                     e.getRole(),
                     e.getId(),
-                    e.getAssignedTables()
+                    e.getAssignedTables(),
+                    "*****" // always masked
             });
         }
     }
